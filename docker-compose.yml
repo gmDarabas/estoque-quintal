@@ -1,0 +1,17 @@
+version: "3.8"
+
+name: estoque-front
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    command: ["sh", "entrypoint.sh"]
+
+volumes:
+  postgres_data:

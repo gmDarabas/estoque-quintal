@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* Tipografia */
+.h1 {
+  @apply text-4xl font-bold leading-tight mt-4 mb-2;
+}
+
+.h2 {
+  @apply text-3xl font-semibold leading-tight mt-4 mb-2;
+}
+
+.h3 {
+  @apply text-2xl font-medium leading-tight mt-4 mb-2;
+}
+
+.p {
+  @apply text-base leading-relaxed mt-2 mb-2;
+}
+
+.lead {
+  @apply text-lg font-light leading-relaxed mt-2 mb-4;
+}
+
+.small {
+  @apply text-sm font-normal leading-normal mt-1 mb-1;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
