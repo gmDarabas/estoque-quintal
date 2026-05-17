@@ -7,12 +7,16 @@ type Props = {
   value?: string | null;
   onChange?: (value: string | null) => void;
   placeholder?: string;
+  allowCreate?: boolean;
+  style?: React.CSSProperties;
 };
 
 export default function SelectCategoria({
   value,
   onChange,
   placeholder = "Selecione ou crie uma categoria",
+  allowCreate = true,
+  style,
 }: Props) {
   const [search, setSearch] = useState("");
 
@@ -24,7 +28,7 @@ export default function SelectCategoria({
     const hasExactMatch = categorias.some(
       (c) => c.nome.toLowerCase() === search.toLowerCase()
     );
-    if (search && !hasExactMatch) {
+    if (search && !hasExactMatch && allowCreate) {
       existing.push({ value: `__novo__:${search}`, label: `Criar "${search}"` });
     }
     return existing;
@@ -62,6 +66,7 @@ export default function SelectCategoria({
       onSearch={setSearch}
       onChange={handleChange}
       onBlur={() => setSearch("")}
+      style={style}
     />
   );
 }

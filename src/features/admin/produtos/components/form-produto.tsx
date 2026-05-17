@@ -10,7 +10,9 @@ import {
   Form,
   Skeleton,
   Select,
+  Tooltip,
 } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 import { useCreateProduto } from "../api/create";
 import { useGetProduto } from "../api/get-one";
 import { useUpdateProduto } from "../api/update";
@@ -43,6 +45,7 @@ export default function FormProduto() {
         estoque_minimo: produto.estoque_minimo,
         unidade: produto.unidade,
         preco_custo_atual: produto.preco_custo_atual,
+        margem: produto.margem,
       }
     : { unidade: "un", quantidade_atual: 0, estoque_minimo: 0 };
 
@@ -139,15 +142,40 @@ export default function FormProduto() {
             </Col>
           </Row>
 
-          <Form.Item label="Preço de custo atual" name="preco_custo_atual">
-            <InputNumber
-              style={{ width: "100%" }}
-              min={0}
-              step={0.01}
-              precision={2}
-              prefix="R$"
-            />
-          </Form.Item>
+          <Row gutter={[16, 0]}>
+            <Col xs={24} md={16}>
+              <Form.Item label="Preço de custo atual" name="preco_custo_atual">
+                <InputNumber
+                  style={{ width: "100%" }}
+                  min={0}
+                  step={0.01}
+                  precision={2}
+                  prefix="R$"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={8}>
+              <Form.Item
+                name="margem"
+                label={
+                  <span>
+                    Margem&nbsp;
+                    <Tooltip title="Percentual de lucro sobre o custo médio. Usado para calcular o preço de venda sugerido.">
+                      <QuestionCircleOutlined style={{ color: "#aaa" }} />
+                    </Tooltip>
+                  </span>
+                }
+              >
+                <InputNumber
+                  style={{ width: "100%" }}
+                  min={0}
+                  step={0.5}
+                  precision={2}
+                  suffix="%"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item label="Foto">
             <FotoUpload

@@ -3,13 +3,30 @@ import { GetPageOptions, Page } from "@/types/interfaces";
 import { ProdutoEstoque } from "./types";
 import { supabase } from "@/supabaseClient";
 
+export type OrderByOption = "nome_asc" | "quantidade_asc" | "quantidade_desc" | "valor_desc";
+
 export type ListProdutoResult = Page<ProdutoEstoque>;
-export type ListProdutoParams = GetPageOptions & { q?: string };
+export type ListProdutoParams = GetPageOptions & {
+  q?: string;
+  categoria_id?: string;
+  abaixo_do_minimo?: boolean;
+  orderBy?: OrderByOption;
+};
+
+const ORDER_MAP: Record<OrderByOption, { column: string; ascending: boolean; nullsFirst?: boolean }> = {
+  nome_asc:       { column: "nome",               ascending: true  },
+  quantidade_asc: { column: "quantidade_atual",    ascending: true  },
+  quantidade_desc:{ column: "quantidade_atual",    ascending: false },
+  valor_desc:     { column: "valor_total_estoque", ascending: false, nullsFirst: false },
+};
 
 const listProdutos = async ({
   page,
   rpp,
   q,
+  categoria_id,
+  abaixo_do_minimo,
+  orderBy = "nome_asc",
 }: ListProdutoParams): Promise<ListProdutoResult> => {
   page = page || 1;
   rpp = rpp || 15;
@@ -17,15 +34,17 @@ const listProdutos = async ({
   const from = (page - 1) * rpp;
   const to = from + rpp - 1;
 
+  const { column, ascending, nullsFirst } = ORDER_MAP[orderBy];
+
   let query = supabase
     .from("v_estoque_atual")
     .select("*, categorias(id, nome)", { count: "exact" })
-    .order("nome", { ascending: true })
+    .order(column, { ascending, nullsFirst })
     .range(from, to);
 
-  if (q) {
-    query = query.or(`nome.ilike.%${q}%,descricao.ilike.%${q}%`);
-  }
+  if (q)               query = query.or(`nome.ilike.%${q}%,descricao.ilike.%${q}%`);
+  if (categoria_id)    query = query.eq("categoria_id", categoria_id);
+  if (abaixo_do_minimo) query = query.eq("abaixo_do_minimo", true);
 
   const { data, count, error } = await query;
 

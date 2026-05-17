@@ -10,6 +10,7 @@ export type Produto = {
   unidade: string;
   foto_url?: string | null;
   preco_custo_atual?: number | null;
+  margem?: number | null;
   created_at: string;
   updated_at: string;
   deleted_at?: string | null;

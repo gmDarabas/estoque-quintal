@@ -1,0 +1,73 @@
+.produto-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.produto-card {
+  cursor: pointer;
+}
+
+.produto-card-content {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.produto-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.produto-nome {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.produto-categoria {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.produto-metricas {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.produto-metrica {
+  font-size: 12px;
+}
+
+.produto-imagem {
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.produto-imagem-placeholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background: #f5f5f5;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+.produto-imagem-icon {
+  color: #bbb;
+  font-size: 22px;
+}
+
+.produto-paginacao {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}

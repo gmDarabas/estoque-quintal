@@ -1,23 +1,27 @@
-import { Button, Input, Row } from "antd";
+import { Button } from "antd";
 import DefaultPageContainer from "../../../components/page-container.tsx/page-container";
 import { PlusOutlined } from "@ant-design/icons";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useListProdutos } from "./api/list";
 import DefaultPageHeader from "@/components/page-header/page-header";
 import { useDeleteProduto } from "./api/delete";
 import { useConfirmDelete } from "@/lib/use-confirm-delete";
 import ProdutoTableOrList from "./components/produto-table-or-list";
-
-const { Search } = Input;
+import ModalProduto from "./components/modal-produto/modal-produto";
+import { ProdutoEstoque } from "./api/types";
+import FiltrosProduto, { FiltrosProdutoValue } from "./components/filtros-produto";
 
 export default function PageProdutos() {
   const navigate = useNavigate();
+
+  const [produtoSelecionado, setProdutoSelecionado] = useState<ProdutoEstoque | null>(null);
 
   const {
     isLoading,
     data: pageData,
     pagination,
-    handleFilterChange: changePaginatorFilter,
+    handleFilterChange,
   } = useListProdutos({ page: 1, rpp: 10 });
 
   const deleteProduto = useDeleteProduto();
@@ -31,8 +35,15 @@ export default function PageProdutos() {
     });
   };
 
-  const onSearch = (filter: string) => {
-    changePaginatorFilter({ fetchParams: { q: filter } });
+  const handleFiltrosChange = ({ q, categoriaId, abaixoMinimo, orderBy }: FiltrosProdutoValue) => {
+    handleFilterChange({
+      fetchParams: {
+        q,
+        categoria_id: categoriaId,
+        abaixo_do_minimo: abaixoMinimo || undefined,
+        orderBy,
+      },
+    });
   };
 
   return (
@@ -51,20 +62,21 @@ export default function PageProdutos() {
         ]}
       />
       <DefaultPageContainer>
-        <Row style={{ marginBottom: "16px" }}>
-          <Search
-            allowClear
-            placeholder="Buscar..."
-            style={{ width: 200 }}
-            onSearch={onSearch}
-          />
-        </Row>
+        <FiltrosProduto onChange={handleFiltrosChange} />
+
         <ProdutoTableOrList
           data={pageData?.list}
           loading={isLoading}
           pagination={pagination}
+          onView={setProdutoSelecionado}
           onEdit={(id) => navigate(`/produto/${id}`)}
           onDelete={handleDelete}
+        />
+
+        <ModalProduto
+          produto={produtoSelecionado}
+          onClose={() => setProdutoSelecionado(null)}
+          onEdit={(id) => navigate(`/produto/${id}`)}
         />
       </DefaultPageContainer>
     </>
