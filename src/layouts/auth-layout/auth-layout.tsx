@@ -1,6 +1,7 @@
 import { Col, Layout, theme } from "antd";
 import { Outlet } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
+import logo from "/public/wrench.png";
 
 function AuthLayout() {
   const {
@@ -33,11 +34,7 @@ function AuthLayout() {
               gap: 4,
             }}
           >
-            <img
-              src="/logo.png"
-              alt="Quintal da Olivia"
-              style={{ width: 180 }}
-            />
+            <img src={logo} alt="Quintal da Olivia" style={{ width: 180 }} />
             <span
               style={{
                 fontSize: 12,
