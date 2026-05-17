@@ -18,13 +18,16 @@ import { useGetProduto } from "../api/get-one";
 import { useUpdateProduto } from "../api/update";
 import { uploadFotoProduto } from "../api/upload-foto";
 import { CreateProdutoDto, ProdutoComCategoria } from "../api/types";
+import { useCreateMovimentacao } from "../../movimentacoes/api/create";
 import SelectCategoria from "../../categorias/components/select-categoria";
 import FotoUpload from "./foto-upload";
 import CopiarProdutoModal from "./copiar-produto-modal";
 
 const UNIDADES = ["un", "kg", "g", "l", "ml", "cx", "pç", "m", "cm"];
 
-type FormType = Omit<CreateProdutoDto, "foto_url">;
+type FormType = Omit<CreateProdutoDto, "foto_url" | "quantidade_atual"> & {
+  estoque_inicial?: number;
+};
 
 export default function FormProduto() {
   const navigate = useNavigate();
@@ -38,6 +41,7 @@ export default function FormProduto() {
 
   const createProduto = useCreateProduto();
   const updateProduto = useUpdateProduto();
+  const createMovimentacao = useCreateMovimentacao();
   const { data: produto, isLoading } = useGetProduto(id);
 
   const initialValues = produto
@@ -69,31 +73,47 @@ export default function FormProduto() {
     setCopiarModalOpen(false);
   };
 
+  const resolverFoto = async (produtoId: string) => {
+    if (fotoFile) return uploadFotoProduto(produtoId, fotoFile);
+    return fotoUrlCopiada ?? undefined;
+  };
+
   const onSubmit = async (values: FormType) => {
+    const { estoque_inicial, ...produtoValues } = values;
+
     if (id) {
-      let foto_url = produto?.foto_url;
-      if (fotoFile) {
-        foto_url = await uploadFotoProduto(id, fotoFile);
-      }
-      await updateProduto(id, { ...values, foto_url });
+      const foto_url = fotoFile
+        ? await uploadFotoProduto(id, fotoFile)
+        : produto?.foto_url;
+      await updateProduto(id, { ...produtoValues, foto_url });
+      return;
+    }
+
+    const novoProduto = await createProduto({
+      ...produtoValues,
+      quantidade_atual: 0,
+    });
+
+    const foto_url = await resolverFoto(novoProduto.id);
+    if (foto_url) await updateProduto(novoProduto.id, { foto_url });
+
+    if (estoque_inicial && estoque_inicial > 0) {
+      await createMovimentacao({
+        produto_id: novoProduto.id,
+        tipo: "entrada",
+        quantidade: estoque_inicial,
+        preco_custo_unitario: produtoValues.preco_custo_atual ?? null,
+        data_movimentacao: new Date().toISOString(),
+        observacao: "Estoque inicial",
+      });
+    }
+
+    if (saveMode.current === "saveAndNew") {
+      form.resetFields();
+      setFotoFile(null);
+      setFotoUrlCopiada(null);
     } else {
-      const novoProduto = await createProduto({ ...values });
-      let foto_url: string | undefined;
-      if (fotoFile) {
-        foto_url = await uploadFotoProduto(novoProduto.id, fotoFile);
-      } else if (fotoUrlCopiada) {
-        foto_url = fotoUrlCopiada;
-      }
-      if (foto_url) {
-        await updateProduto(novoProduto.id, { foto_url });
-      }
-      if (saveMode.current === "saveAndNew") {
-        form.resetFields();
-        setFotoFile(null);
-        setFotoUrlCopiada(null);
-      } else {
-        navigate(`/produtos`);
-      }
+      navigate(`/produtos`);
     }
   };
 
@@ -219,22 +239,44 @@ export default function FormProduto() {
             </Col>
           </Row>
 
+          {!id && (
+            <Row gutter={[16, 0]}>
+              <Col xs={24} md={6}>
+                <Form.Item label="Estoque inicial" name="estoque_inicial">
+                  <InputNumber style={{ width: "100%" }} min={0} step={0.01} />
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
+
           <Form.Item label="Foto">
             <FotoUpload
               currentUrl={fotoUrlCopiada ?? produto?.foto_url}
-              onFileSelect={(file) => { setFotoFile(file); setFotoUrlCopiada(null); }}
+              onFileSelect={(file) => {
+                setFotoFile(file);
+                setFotoUrlCopiada(null);
+              }}
             />
           </Form.Item>
 
           <Row justify="end">
             <Col xs={24}>
               <Form.Item className="w-full mt-10 text-right">
-                <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", flexWrap: "wrap" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 8,
+                    justifyContent: "flex-end",
+                    flexWrap: "wrap",
+                  }}
+                >
                   {!id && (
                     <Button
                       htmlType="submit"
                       className="lg:w-auto w-full"
-                      onClick={() => { saveMode.current = "saveAndNew"; }}
+                      onClick={() => {
+                        saveMode.current = "saveAndNew";
+                      }}
                     >
                       Salvar e cadastrar outro
                     </Button>
@@ -243,7 +285,9 @@ export default function FormProduto() {
                     type="primary"
                     htmlType="submit"
                     className="lg:w-auto w-full"
-                    onClick={() => { saveMode.current = "save"; }}
+                    onClick={() => {
+                      saveMode.current = "save";
+                    }}
                   >
                     Salvar
                   </Button>
