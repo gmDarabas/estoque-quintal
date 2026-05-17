@@ -7,6 +7,8 @@ export type Movimentacao = {
   produto_id: string;
   tipo: TipoMovimentacao;
   quantidade: number;
+  preco_custo_unitario?: number | null;
+  preco_venda_unitario?: number | null;
   observacao?: string | null;
   created_at: string;
   deleted_at?: string | null;
@@ -18,5 +20,10 @@ export type MovimentacaoComProduto = Movimentacao & {
 
 export type CreateMovimentacaoDto = Pick<
   Movimentacao,
-  "produto_id" | "tipo" | "quantidade" | "observacao"
+  | "produto_id"
+  | "tipo"
+  | "quantidade"
+  | "preco_custo_unitario"
+  | "preco_venda_unitario"
+  | "observacao"
 >;

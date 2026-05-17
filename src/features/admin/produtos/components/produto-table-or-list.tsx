@@ -1,14 +1,19 @@
 import { Grid, Image, Table, Tag } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { PictureOutlined } from "@ant-design/icons";
-import { ProdutoComCategoria } from "../api/types";
+import { ProdutoEstoque } from "../api/types";
 import TableActions, { DeleteAction, EditAction } from "@/components/table-actions/table-actions";
 import ProdutoMobileList from "./produto-mobile-list";
 
 const { useBreakpoint } = Grid;
 
+const formatCurrency = (value: number | null | undefined) =>
+  value != null
+    ? value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+    : "—";
+
 interface Props {
-  data: ProdutoComCategoria[] | undefined;
+  data: ProdutoEstoque[] | undefined;
   loading: boolean;
   pagination: TablePaginationConfig;
   onEdit: (id: string) => void;
@@ -18,7 +23,7 @@ interface Props {
 const columns = (
   onEdit: (id: string) => void,
   onDelete: (id: string, nome: string) => void,
-): ColumnsType<ProdutoComCategoria> => [
+): ColumnsType<ProdutoEstoque> => [
   {
     title: "Foto",
     dataIndex: "foto_url",
@@ -48,40 +53,51 @@ const columns = (
         </div>
       ),
   },
-  { title: "Nome", dataIndex: "nome", width: "30%" },
+  { title: "Nome", dataIndex: "nome", width: "25%" },
   {
     title: "Categoria",
     dataIndex: "categorias",
-    width: "20%",
+    width: "15%",
     responsive: ["md"],
-    render: (categorias: ProdutoComCategoria["categorias"]) =>
+    render: (categorias: ProdutoEstoque["categorias"]) =>
       categorias?.nome ?? "—",
   },
   {
     title: "Quantidade",
     dataIndex: "quantidade_atual",
-    width: "15%",
-    render: (quantidade: number, row: ProdutoComCategoria) => {
-      const abaixoMinimo = quantidade < row.estoque_minimo;
-      return (
-        <Tag color={abaixoMinimo ? "red" : "green"}>
-          {quantidade} {row.unidade}
-        </Tag>
-      );
-    },
+    width: "12%",
+    render: (quantidade: number, row: ProdutoEstoque) => (
+      <Tag color={row.abaixo_do_minimo ? "red" : "green"}>
+        {quantidade} {row.unidade}
+      </Tag>
+    ),
   },
   {
     title: "Estoque Mínimo",
     dataIndex: "estoque_minimo",
-    width: "15%",
+    width: "12%",
     responsive: ["lg"],
-    render: (minimo: number, row: ProdutoComCategoria) =>
+    render: (minimo: number, row: ProdutoEstoque) =>
       `${minimo} ${row.unidade}`,
+  },
+  {
+    title: "Custo médio",
+    dataIndex: "preco_custo_medio",
+    width: "12%",
+    responsive: ["lg"],
+    render: (value: number | null) => formatCurrency(value),
+  },
+  {
+    title: "Valor em estoque",
+    dataIndex: "valor_total_estoque",
+    width: "12%",
+    responsive: ["xl"],
+    render: (value: number | null) => formatCurrency(value),
   },
   {
     title: "Ações",
     dataIndex: "action",
-    render: (_: unknown, row: ProdutoComCategoria) => (
+    render: (_: unknown, row: ProdutoEstoque) => (
       <TableActions>
         <EditAction onClick={() => onEdit(row.id)} />
         <DeleteAction onClick={() => onDelete(row.id, row.nome)} />

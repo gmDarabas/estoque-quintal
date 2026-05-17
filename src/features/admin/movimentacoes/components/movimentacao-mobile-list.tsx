@@ -5,6 +5,11 @@ import { DeleteAction } from "@/components/table-actions/table-actions";
 
 const { Text } = Typography;
 
+const formatCurrency = (value: number | null | undefined) =>
+  value != null
+    ? value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+    : null;
+
 const TIPO_COLOR: Record<TipoMovimentacao, string> = {
   entrada: "green",
   saida: "red",
@@ -64,12 +69,35 @@ function MovimentacaoMobileList({
                   {new Date(item.created_at).toLocaleString("pt-BR")}
                 </Text>
               </div>
+              {(item.preco_custo_unitario != null || item.preco_venda_unitario != null) && (
+                <div style={{ display: "flex", gap: 16, marginTop: 6, flexWrap: "wrap" }}>
+                  {item.preco_custo_unitario != null && (
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                      Preço de custo: {formatCurrency(item.preco_custo_unitario)}
+                    </Text>
+                  )}
+                  {item.preco_venda_unitario != null && (
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                      Preço de venda: {formatCurrency(item.preco_venda_unitario)}
+                    </Text>
+                  )}
+                  {(item.preco_custo_unitario != null || item.preco_venda_unitario != null) && (
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                      Valor total:{" "}
+                      {formatCurrency(
+                        item.quantidade *
+                          (item.preco_custo_unitario ?? item.preco_venda_unitario)!
+                      )}
+                    </Text>
+                  )}
+                </div>
+              )}
               {item.observacao && (
                 <Text
                   type="secondary"
                   style={{ fontSize: 12, display: "block", marginTop: 6 }}
                 >
-                  Obervação: {item.observacao}
+                  Observação: {item.observacao}
                 </Text>
               )}
             </Card>

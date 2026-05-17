@@ -42,6 +42,7 @@ export default function FormProduto() {
         quantidade_atual: produto.quantidade_atual,
         estoque_minimo: produto.estoque_minimo,
         unidade: produto.unidade,
+        preco_custo_atual: produto.preco_custo_atual,
       }
     : { unidade: "un", quantidade_atual: 0, estoque_minimo: 0 };
 
@@ -137,6 +138,16 @@ export default function FormProduto() {
               </Form.Item>
             </Col>
           </Row>
+
+          <Form.Item label="Preço de custo atual" name="preco_custo_atual">
+            <InputNumber
+              style={{ width: "100%" }}
+              min={0}
+              step={0.01}
+              precision={2}
+              prefix="R$"
+            />
+          </Form.Item>
 
           <Form.Item label="Foto">
             <FotoUpload

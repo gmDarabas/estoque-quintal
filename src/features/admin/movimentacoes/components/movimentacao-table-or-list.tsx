@@ -6,6 +6,11 @@ import MovimentacaoMobileList from "./movimentacao-mobile-list";
 
 const { useBreakpoint } = Grid;
 
+const formatCurrency = (value: number | null | undefined) =>
+  value != null
+    ? value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+    : "—";
+
 const TIPO_COLOR: Record<TipoMovimentacao, string> = {
   entrada: "green",
   saida: "red",
@@ -56,9 +61,32 @@ const columns = (
     render: (date: string) => new Date(date).toLocaleString("pt-BR"),
   },
   {
+    title: "Preço de custo",
+    dataIndex: "preco_custo_unitario",
+    width: 130,
+    responsive: ["lg"],
+    render: (preco: number | null) => formatCurrency(preco),
+  },
+  {
+    title: "Preço de venda",
+    dataIndex: "preco_venda_unitario",
+    width: 130,
+    responsive: ["lg"],
+    render: (preco: number | null) => formatCurrency(preco),
+  },
+  {
+    title: "Valor total",
+    width: 130,
+    responsive: ["lg"],
+    render: (_: unknown, row: MovimentacaoComProduto) => {
+      const preco = row.preco_custo_unitario ?? row.preco_venda_unitario;
+      return formatCurrency(preco != null ? row.quantidade * preco : null);
+    },
+  },
+  {
     title: "Observação",
     dataIndex: "observacao",
-    responsive: ["lg"],
+    responsive: ["xl"],
     render: (obs: string | null) => obs ?? "—",
   },
   {

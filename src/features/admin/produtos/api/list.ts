@@ -1,9 +1,9 @@
 import usePaginator from "@/lib/use-paginator";
 import { GetPageOptions, Page } from "@/types/interfaces";
-import { ProdutoComCategoria } from "./types";
+import { ProdutoEstoque } from "./types";
 import { supabase } from "@/supabaseClient";
 
-export type ListProdutoResult = Page<ProdutoComCategoria>;
+export type ListProdutoResult = Page<ProdutoEstoque>;
 export type ListProdutoParams = GetPageOptions & { q?: string };
 
 const listProdutos = async ({
@@ -18,9 +18,9 @@ const listProdutos = async ({
   const to = from + rpp - 1;
 
   let query = supabase
-    .from("v_produtos")
+    .from("v_estoque_atual")
     .select("*, categorias(id, nome)", { count: "exact" })
-    .order("created_at", { ascending: false })
+    .order("nome", { ascending: true })
     .range(from, to);
 
   if (q) {
@@ -44,7 +44,7 @@ const useListProdutos = ({
   rpp = 10,
   queryKeys = [],
 }: GetPageOptions & { queryKeys?: string[] }) => {
-  return usePaginator<ProdutoComCategoria>({
+  return usePaginator<ProdutoEstoque>({
     queryKey: ["produtos", ...queryKeys],
     fetch: listProdutos,
     page,

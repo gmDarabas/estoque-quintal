@@ -1,39 +1,36 @@
 import { Select } from "antd";
-import { useQuery } from "react-query";
-import { supabase } from "@/supabaseClient";
-
-type ProdutoOption = { id: string; nome: string; unidade: string };
+import {
+  ProdutoSelectOption,
+  useListProdutosSelect,
+} from "../api/list-select";
 
 type Props = {
   value?: string | null;
   onChange?: (value: string | null) => void;
+  onSelect?: (product: ProdutoSelectOption | null) => void;
   placeholder?: string;
-};
-
-const fetchProdutos = async (): Promise<ProdutoOption[]> => {
-  const { data, error } = await supabase
-    .from("v_produtos")
-    .select("id, nome, unidade")
-    .order("nome", { ascending: true });
-
-  if (error) throw error;
-  return data ?? [];
 };
 
 export default function SelectProduto({
   value,
   onChange,
+  onSelect,
   placeholder = "Selecione um produto",
 }: Props) {
-  const { data: produtos = [], isLoading } = useQuery({
-    queryKey: ["produtos-select"],
-    queryFn: fetchProdutos,
-  });
+  const { data: produtos = [], isLoading } = useListProdutosSelect();
 
   const options = produtos.map((p) => ({
     value: p.id,
     label: `${p.nome} (${p.unidade})`,
   }));
+
+  const handleChange = (val: string | null) => {
+    onChange?.(val ?? null);
+    if (onSelect) {
+      const found = val ? (produtos.find((p) => p.id === val) ?? null) : null;
+      onSelect(found);
+    }
+  };
 
   return (
     <Select
@@ -46,7 +43,7 @@ export default function SelectProduto({
       filterOption={(input, option) =>
         (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
       }
-      onChange={(val) => onChange?.(val ?? null)}
+      onChange={handleChange}
     />
   );
 }

@@ -22,9 +22,10 @@ const listMovimentacoes = async ({
   const to = from + rpp - 1;
 
   let query = supabase
-    .from("v_movimentacoes")
+    .from("movimentacoes")
     .select("*, produtos(id, nome, unidade)", { count: "exact" })
     .order("created_at", { ascending: false })
+    .is("deleted_at", null)
     .range(from, to);
 
   if (tipo) {
