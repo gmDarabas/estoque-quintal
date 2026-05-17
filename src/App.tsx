@@ -21,34 +21,34 @@ const queryClient = new QueryClient({
 
 const lightTheme = {
   token: {
-    colorPrimary: "#4f46e5",
-    colorBgBase: "#f0f2f5",
-    colorBgContainer: "#ffffff",
-    colorBgElevated: "#ffffff",
-    colorBgLayout: "#f0f2f5",
+    colorPrimary: "#cf6438",
+    colorBgBase: "#faf7f4",
+    colorBgContainer: "#fdfaf7",
+    colorBgElevated: "#fdfaf7",
+    colorBgLayout: "#f5ede7",
     colorTextBase: "#1f2937",
-    colorBorder: "#dde3ec",
-    colorBorderSecondary: "#eaeff5",
-    colorFillAlter: "#f3f6fa", // header de tabelas, collapse, etc.
-    colorFillContent: "#edf1f7",
+    colorBorder: "#ddd5cc",
+    colorBorderSecondary: "#eae0da",
+    colorFillAlter: "#f3ede8",
+    colorFillContent: "#ebe0d9",
     borderRadius: 8,
     borderRadiusLG: 12,
   },
   components: {
     Table: {
-      headerBg: "#edf2f7",
-      headerColor: "#374151",
-      headerSplitColor: "#dde3ec",
-      borderColor: "#dde3ec",
-      rowHoverBg: "#f5f3ff",
+      headerBg: "#e8f0e0",
+      headerColor: "#2d5016",
+      headerSplitColor: "#d0e0c4",
+      borderColor: "#ddd5cc",
+      rowHoverBg: "#fdf0e8",
     },
     Card: {
-      headerBg: "#f7f9fc",
+      headerBg: "#f5ede8",
     },
     Layout: {
-      siderBg: "#ffffff",
-      triggerBg: "#f0f4f8",
-      triggerColor: "#5a6a7e",
+      siderBg: "#fdfaf7",
+      triggerBg: "#f0e8e0",
+      triggerColor: "#cf6438",
     },
     Menu: {
       itemBg: "transparent",
@@ -59,13 +59,13 @@ const lightTheme = {
 
 const darkTheme = {
   token: {
-    colorPrimary: "#6366f1",
+    colorPrimary: "#d97a52",
     borderRadius: 8,
     borderRadiusLG: 12,
   },
   components: {
     Table: {
-      rowHoverBg: "rgba(59,130,246,0.06)",
+      rowHoverBg: "rgba(207,100,56,0.08)",
     },
   },
 };
@@ -115,7 +115,7 @@ const rootFallback = (
         padding: "8px 20px",
         borderRadius: 8,
         border: "none",
-        background: "#4f46e5",
+        background: "#cf6438",
         color: "#fff",
         cursor: "pointer",
         fontSize: 14,
