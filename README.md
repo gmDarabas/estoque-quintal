@@ -1,64 +1,37 @@
-# Gestão Estoque - Front End
-
-## Projeto: <b>Gestão Estoque</b>
+# Sistema de Estoque - Front End
 
 <div align="center">
-  <img src="./public/logo.jpg" alter="logo">
+  <img src="./public/logo.jpg" alt="logo">
 </div>
-  
-<br>
-
-## Integrantes
-* [Alex Farias](https://github.com/Alex-Farias)
-* [Guilherme Machado Darabas](https://github.com/gmdarabas)
-* [Paulo Roberto Simão](https://github.com/paulorsimao)
-* [Rubens Scotti Junior](https://github.com/rubensscotti)
-* [Stephan  Anthony  Marques](https://github.com/stephan-anthony)
-* [Vitor Henrique Pereira](https://github.com/vitorhenriquepereira)
 
 <br>
 
 ## Descrição do Projeto
 
-<p style="text-indent: 5px; margin-left:10px;">
-Descrição do projeto
-</p>
-
-<br>
+Sistema web de controle de estoque desenvolvido com React e Supabase. Permite o cadastro e gerenciamento de produtos organizados por categorias, com controle de quantidade atual, estoque mínimo e foto do produto.
 
 ## Objetivo
 
-<p style="text-indent: 5px; margin-left:10px;">
-Objetivo
-</p>
+Oferecer uma interface simples e funcional para gestão de estoque, com alertas visuais de produtos abaixo do estoque mínimo e upload de fotos para identificação rápida dos itens.
 
-<br>
+## Funcionalidades
 
-## Estrutura do Projeto
-
-* Tela de login
-* Tela de cadastro de usuário
-* Tela de cadastro de Produtos
-* Tela de cadastro de Tipos de Produtos
-* Movimentações
-
-<br>
-
-## Público Alvo
-<p style="text-indent: 5px; margin-left:10px;">
-Publico alvo
-</p>
-
-<br>
+- Autenticação de usuários
+- Cadastro e listagem de produtos
+- Categorias com criação inline no formulário de produto
+- Controle de quantidade atual e estoque mínimo
+- Indicador visual de produtos abaixo do estoque mínimo
+- Upload e compressão automática de foto do produto
+- Soft delete (registros não são apagados fisicamente do banco)
 
 ## Tecnologias
 
-* React
-* Vitejs
-* TypeScript
-* Antd
-
-<br>
+- [React](https://react.dev/) + [Vite](https://vitejs.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Ant Design](https://ant-design.antgroup.com/)
+- [Supabase](https://supabase.com/) (banco de dados e storage)
+- [React Query](https://tanstack.com/query/v3)
+- [React Router](https://reactrouter.com/)
 
 ## Instalar e Rodar
 
@@ -67,3 +40,18 @@ npm install
 
 npm run dev
 ```
+
+## Variáveis de Ambiente
+
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+
+```env
+VITE_SUPABASE_URL=sua_url_do_supabase
+VITE_SUPABASE_TOKEN=sua_chave_anonima_do_supabase
+```
+
+## Configuração do Supabase
+
+Tabelas necessárias: `categorias`, `produtos`
+
+Bucket de storage necessário: `fotos_produto` (público)

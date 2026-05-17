@@ -1,23 +1,47 @@
-import { usePageTitle } from "@/layouts/admin-layout/providers/page-title-context";
-import { PageHeader, PageHeaderProps } from "@ant-design/pro-components";
-import { Grid } from "antd";
+import { ReactNode } from "react";
+import { Button, Flex, Grid, Space } from "antd";
 import Title from "antd/es/typography/Title";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { usePageTitle } from "@/layouts/admin-layout/providers/page-title-context";
 
 const { useBreakpoint } = Grid;
 
-export default function DefaultPageHeader({ children, title, onBack, ...props }: PageHeaderProps) {
-	const { setPageTitle } = usePageTitle('', !!onBack);
+type Props = {
+  title?: string | ReactNode;
+  extra?: ReactNode | ReactNode[];
+  onBack?: () => void;
+  children?: ReactNode;
+};
 
-	if (typeof title === "string") {
-		setPageTitle(title);
-	}
+export default function DefaultPageHeader({
+  title,
+  extra,
+  onBack,
+  children,
+}: Props) {
+  usePageTitle(typeof title === "string" ? title : undefined, !!onBack);
 
-	const screens = useBreakpoint();
-	const isMobile = screens.xs;
+  const screens = useBreakpoint();
+  const isMobile = screens.xs;
 
-	const titleComponent = () => isMobile ? undefined : <Title level={2} style={{ marginBottom: 5 }}>{title}</Title>
-
-	return (
-		<PageHeader {...props} title={titleComponent()} onBack={isMobile ? undefined : onBack}>{children}</PageHeader>
-	);
+  return (
+    <Flex
+      justify={isMobile ? "flex-end" : "space-between"}
+      align="center"
+      style={{ marginBottom: 16, padding: "0 4px" }}
+    >
+      {!isMobile && (
+        <Flex align="center" gap={8}>
+          {onBack && (
+            <Button icon={<ArrowLeftOutlined />} type="text" onClick={onBack} />
+          )}
+          <Title level={2} style={{ marginBottom: 0 }}>
+            {title}
+          </Title>
+        </Flex>
+      )}
+      <Space>{extra}</Space>
+      {children}
+    </Flex>
+  );
 }

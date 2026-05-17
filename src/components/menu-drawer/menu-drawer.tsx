@@ -4,6 +4,7 @@ import { Menu } from "antd";
 import { useNavigate } from "react-router-dom";
 import { MenuOutlined } from "@ant-design/icons";
 import { LayoutProps } from "@/layouts/base-layout/base-layout";
+import logo from "/public/wrench.png";
 
 function MenuDrawer({ menuItens }: LayoutProps) {
   const navigate = useNavigate();
@@ -23,7 +24,12 @@ function MenuDrawer({ menuItens }: LayoutProps) {
         style={{ fontSize: "16px", marginRight: "16px", padding: 0 }}
       />
       <Drawer
-        title="Menu"
+        title={
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <img src={logo} alt="Logo" style={{ width: 24, height: 24 }} />
+            <span style={{ fontWeight: 700, fontSize: 15 }}>PFC System</span>
+          </div>
+        }
         placement="left"
         closable={false}
         onClose={() => setOpen(false)}
