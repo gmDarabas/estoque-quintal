@@ -133,6 +133,11 @@ function ProdutoInfo({ produto }: { produto: ProdutoEstoque }) {
         </Typography.Title>
         {produto.categorias?.nome && <Tag>{produto.categorias.nome}</Tag>}
       </div>
+      {produto.codigo && (
+        <Text type="secondary" style={{ fontSize: 13 }}>
+          Código: {produto.codigo}
+        </Text>
+      )}
       {produto.abaixo_do_minimo && (
         <div>
           <Tag color="red" icon={<WarningOutlined />}>

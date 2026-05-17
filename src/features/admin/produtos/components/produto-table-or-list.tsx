@@ -55,6 +55,13 @@ const columns = (
         </div>
       ),
   },
+  {
+    title: "Código",
+    dataIndex: "codigo",
+    width: "10%",
+    responsive: ["md"],
+    render: (codigo: string | null) => codigo ?? "—",
+  },
   { title: "Nome", dataIndex: "nome", width: "25%" },
   {
     title: "Categoria",

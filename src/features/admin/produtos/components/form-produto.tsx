@@ -42,6 +42,7 @@ export default function FormProduto() {
 
   const initialValues = produto
     ? {
+        codigo: produto.codigo,
         nome: produto.nome,
         descricao: produto.descricao,
         categoria_id: produto.categoria_id,
@@ -54,6 +55,7 @@ export default function FormProduto() {
 
   const handleCopy = (p: ProdutoComCategoria) => {
     form.setFieldsValue({
+      codigo: p.codigo,
       nome: p.nome,
       descricao: p.descricao,
       categoria_id: p.categoria_id,
@@ -127,7 +129,12 @@ export default function FormProduto() {
           )}
 
           <Row gutter={[16, 0]}>
-            <Col xs={24} md={16}>
+            <Col xs={24} md={4}>
+              <Form.Item label="Código" name="codigo">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
               <Form.Item
                 label="Nome"
                 name="nome"

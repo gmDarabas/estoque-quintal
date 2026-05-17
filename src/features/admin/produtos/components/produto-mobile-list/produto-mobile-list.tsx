@@ -86,9 +86,16 @@ function FotoPreview({ fotoUrl }: { fotoUrl?: string | null }) {
 function ProdutoInfo({ item }: { item: ProdutoEstoque }) {
   return (
     <div className="produto-info">
-      <Text strong className="produto-nome">
-        {item.nome}
-      </Text>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 6, flexWrap: "wrap" }}>
+        <Text strong className="produto-nome">
+          {item.nome}
+        </Text>
+        {item.codigo && (
+          <Text type="secondary" style={{ fontSize: 12, whiteSpace: "nowrap" }}>
+            #{item.codigo}
+          </Text>
+        )}
+      </div>
 
       {item.categorias?.nome && (
         <Text type="secondary" className="produto-categoria">

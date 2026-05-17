@@ -2,6 +2,7 @@ import { Categoria } from "../../categorias/api/types";
 
 export type Produto = {
   id: string;
+  codigo?: string | null;
   nome: string;
   descricao?: string | null;
   categoria_id?: string | null;

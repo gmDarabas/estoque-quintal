@@ -65,7 +65,7 @@ export const uploadFotoProduto = async (produtoId: string, file: File): Promise<
 
   const { error: uploadError } = await supabase.storage
     .from(Buckets.fotosProduto)
-    .upload(filePath, blob, { upsert: true, contentType: 'image/jpeg' });
+    .upload(filePath, blob, { contentType: 'image/jpeg' });
 
   if (uploadError) throw uploadError;
 

@@ -42,7 +42,7 @@ const listProdutos = async ({
     .order(column, { ascending, nullsFirst })
     .range(from, to);
 
-  if (q)               query = query.or(`nome.ilike.%${q}%,descricao.ilike.%${q}%`);
+  if (q)               query = query.or(`codigo.ilike.%${q}%,nome.ilike.%${q}%,descricao.ilike.%${q}%`);
   if (categoria_id)    query = query.eq("categoria_id", categoria_id);
   if (abaixo_do_minimo) query = query.eq("abaixo_do_minimo", true);
 
