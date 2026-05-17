@@ -4,9 +4,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCreateMovimentacao } from "../api/create";
 import { CreateMovimentacaoDto, TipoMovimentacao } from "../api/types";
-import SelectProduto, {
-  ProdutoSelectOption,
-} from "../../produtos/components/select-produto";
+import { ProdutoSelectOption } from "../../produtos/api/list-select";
+import SelectProduto from "../../produtos/components/select-produto";
 
 const TIPO_OPTIONS = [
   { value: "entrada", label: "Entrada" },
@@ -33,7 +32,10 @@ export default function FormMovimentacao() {
   const handleTipoChange = (value: TipoMovimentacao) => {
     setTipo(value);
     if (value === "entrada" && selectedProduto?.preco_custo_atual != null) {
-      form.setFieldValue("preco_custo_unitario", selectedProduto.preco_custo_atual);
+      form.setFieldValue(
+        "preco_custo_unitario",
+        selectedProduto.preco_custo_atual,
+      );
     } else {
       form.setFieldValue("preco_custo_unitario", undefined);
     }
@@ -46,12 +48,7 @@ export default function FormMovimentacao() {
   };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={onSubmit}
-      autoComplete="off"
-    >
+    <Form form={form} layout="vertical" onFinish={onSubmit} autoComplete="off">
       <Form.Item
         label="Produto"
         name="produto_id"
@@ -81,7 +78,10 @@ export default function FormMovimentacao() {
         </Col>
         {tipo === "entrada" && (
           <Col xs={24} md={8}>
-            <Form.Item label="Preço de custo unitário" name="preco_custo_unitario">
+            <Form.Item
+              label="Preço de custo unitário"
+              name="preco_custo_unitario"
+            >
               <InputNumber
                 style={{ width: "100%" }}
                 min={0}
@@ -94,7 +94,10 @@ export default function FormMovimentacao() {
         )}
         {tipo === "saida" && (
           <Col xs={24} md={8}>
-            <Form.Item label="Preço de venda unitário" name="preco_venda_unitario">
+            <Form.Item
+              label="Preço de venda unitário"
+              name="preco_venda_unitario"
+            >
               <InputNumber
                 style={{ width: "100%" }}
                 min={0}

@@ -1,7 +1,7 @@
 import { Button, Form, Input, Typography } from "antd";
 import { useState } from "react";
 import { useAuthContext } from "./providers/auth-context";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { login } from "./api/login";
 
 const { Text } = Typography;
@@ -56,10 +56,6 @@ export default function Login() {
           </Text>
         )}
       </Form.Item>
-      <Link to={"/cadastre-se"}>
-        Cadastre-se
-        <br />
-      </Link>
     </Form>
   );
 }
