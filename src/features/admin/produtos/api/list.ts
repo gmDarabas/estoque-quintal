@@ -62,12 +62,14 @@ const useListProdutos = ({
   page = 1,
   rpp = 10,
   queryKeys = [],
-}: GetPageOptions & { queryKeys?: string[] }) => {
+  defaultParams,
+}: GetPageOptions & { queryKeys?: string[]; defaultParams?: Partial<ListProdutoParams> }) => {
   return usePaginator<ProdutoEstoque>({
     queryKey: ["produtos", ...queryKeys],
     fetch: listProdutos,
     page,
     rpp,
+    defaultParams,
   });
 };
 

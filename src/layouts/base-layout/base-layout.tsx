@@ -18,7 +18,7 @@ import {
   MoonOutlined,
   SunOutlined,
 } from "@ant-design/icons";
-import { MenuItemType } from "antd/es/menu/interface";
+import type { ItemType } from "antd/es/menu/interface";
 import logo from "/public/wrench.png";
 import { usePageTitle } from "../admin-layout/providers/page-title-context";
 import { useTheme } from "@/contexts/theme-context";
@@ -29,7 +29,7 @@ const { useBreakpoint } = Grid;
 const { Title } = Typography;
 
 export interface LayoutProps {
-  menuItens: Array<MenuItemType>;
+  menuItens: Array<ItemType>;
 }
 
 function BaseLayout({ menuItens }: LayoutProps) {
