@@ -1,7 +1,7 @@
 import { Col, Layout, theme } from "antd";
 import { Outlet } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
-import logo from "/public/wrench.png";
+import logo from "/public/logo.png";
 
 function AuthLayout() {
   const {
