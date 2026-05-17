@@ -7,7 +7,7 @@ export default function ({ command, mode }) {
 
   return defineConfig({
     plugins: [react()],
-    base: !!env.VITE_PORT ? '' : '/pfc-manutencoes/',
+    base: !!env.VITE_PORT ? "" : "/estoque-quintal/",
     server: {
       port: +env.VITE_PORT,
     },

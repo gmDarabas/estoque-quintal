@@ -41,13 +41,12 @@ export default function FormProduto() {
         nome: produto.nome,
         descricao: produto.descricao,
         categoria_id: produto.categoria_id,
-        quantidade_atual: produto.quantidade_atual,
         estoque_minimo: produto.estoque_minimo,
         unidade: produto.unidade,
         preco_custo_atual: produto.preco_custo_atual,
         margem: produto.margem,
       }
-    : { unidade: "un", quantidade_atual: 0, estoque_minimo: 0 };
+    : { unidade: "un", estoque_minimo: 0 };
 
   const onSubmit = async (values: FormType) => {
     if (id) {
@@ -62,7 +61,7 @@ export default function FormProduto() {
         const foto_url = await uploadFotoProduto(novoProduto.id, fotoFile);
         await updateProduto(novoProduto.id, { foto_url });
       }
-      navigate(`/produto/${novoProduto.id}`);
+      navigate(`/produtos`);
     }
   };
 
@@ -80,53 +79,31 @@ export default function FormProduto() {
           onFinish={onSubmit}
           autoComplete="off"
         >
-          <Form.Item
-            label="Nome"
-            name="nome"
-            rules={[{ required: true, message: "Por favor insira o nome!" }]}
-          >
-            <Input />
-          </Form.Item>
+          <Row gutter={[16, 0]}>
+            <Col xs={24} md={16}>
+              <Form.Item
+                label="Nome"
+                name="nome"
+                rules={[
+                  { required: true, message: "Por favor insira o nome!" },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={8}>
+              <Form.Item label="Categoria" name="categoria_id">
+                <SelectCategoria />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item label="Descrição" name="descricao">
             <Input.TextArea rows={3} />
           </Form.Item>
 
           <Row gutter={[16, 0]}>
-            <Col xs={24} md={16}>
-              <Form.Item label="Categoria" name="categoria_id">
-                <SelectCategoria />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={8}>
-              <Form.Item
-                label="Unidade"
-                name="unidade"
-                rules={[
-                  { required: true, message: "Por favor insira a unidade!" },
-                ]}
-              >
-                <Select
-                  showSearch
-                  options={UNIDADES.map((u) => ({ value: u, label: u }))}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={[16, 0]}>
-            <Col xs={24} md={12}>
-              <Form.Item
-                label="Quantidade Atual"
-                name="quantidade_atual"
-                rules={[
-                  { required: true, message: "Por favor insira a quantidade!" },
-                ]}
-              >
-                <InputNumber style={{ width: "100%" }} min={0} step={0.01} />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={12}>
+            <Col xs={24} md={6}>
               <Form.Item
                 label="Estoque Mínimo"
                 name="estoque_minimo"
@@ -140,10 +117,21 @@ export default function FormProduto() {
                 <InputNumber style={{ width: "100%" }} min={0} step={0.01} />
               </Form.Item>
             </Col>
-          </Row>
-
-          <Row gutter={[16, 0]}>
-            <Col xs={24} md={16}>
+            <Col xs={24} md={6}>
+              <Form.Item
+                label="Unidade"
+                name="unidade"
+                rules={[
+                  { required: true, message: "Por favor insira a unidade!" },
+                ]}
+              >
+                <Select
+                  showSearch
+                  options={UNIDADES.map((u) => ({ value: u, label: u }))}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={6}>
               <Form.Item label="Preço de custo atual" name="preco_custo_atual">
                 <InputNumber
                   style={{ width: "100%" }}
@@ -154,7 +142,7 @@ export default function FormProduto() {
                 />
               </Form.Item>
             </Col>
-            <Col xs={24} md={8}>
+            <Col xs={24} md={6}>
               <Form.Item
                 name="margem"
                 label={

@@ -12,10 +12,9 @@ const formatCurrency = (value: number | null | undefined) =>
 
 const TIPO_COLOR: Record<TipoMovimentacao, string> = {
   entrada: "green",
-  saida: "red",
-  perda: "orange",
+  saida: "orange",
+  perda: "red",
 };
-
 
 const TIPO_LABEL: Record<TipoMovimentacao, string> = {
   entrada: "Entrada",
@@ -67,7 +66,8 @@ function MovimentacaoMobileList({
                   </Text>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  {(item.preco_custo_unitario != null || item.preco_venda_unitario != null) && (
+                  {(item.preco_custo_unitario != null ||
+                    item.preco_venda_unitario != null) && (
                     <Text
                       strong
                       style={{
@@ -78,7 +78,8 @@ function MovimentacaoMobileList({
                     >
                       {formatCurrency(
                         item.quantidade *
-                          (item.preco_custo_unitario ?? item.preco_venda_unitario)!
+                          (item.preco_custo_unitario ??
+                            item.preco_venda_unitario)!,
                       )}
                     </Text>
                   )}
@@ -87,8 +88,16 @@ function MovimentacaoMobileList({
                   </Text>
                 </div>
               </div>
-              {(item.preco_custo_unitario != null || item.preco_venda_unitario != null) && (
-                <div style={{ display: "flex", gap: 16, marginTop: 6, flexWrap: "wrap" }}>
+              {(item.preco_custo_unitario != null ||
+                item.preco_venda_unitario != null) && (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 16,
+                    marginTop: 6,
+                    flexWrap: "wrap",
+                  }}
+                >
                   {item.preco_custo_unitario != null && (
                     <Text type="secondary" style={{ fontSize: 12 }}>
                       Custo: {formatCurrency(item.preco_custo_unitario)}

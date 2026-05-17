@@ -1,20 +1,18 @@
 import { Grid, Table, Tag } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { MovimentacaoComProduto, TipoMovimentacao } from "../api/types";
-import TableActions, { DeleteAction } from "@/components/table-actions/table-actions";
+import TableActions, {
+  DeleteAction,
+} from "@/components/table-actions/table-actions";
 import MovimentacaoMobileList from "./movimentacao-mobile-list";
+import { displayMoney } from "@/lib/utils";
 
 const { useBreakpoint } = Grid;
 
-const formatCurrency = (value: number | null | undefined) =>
-  value != null
-    ? value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-    : "—";
-
 const TIPO_COLOR: Record<TipoMovimentacao, string> = {
   entrada: "green",
-  saida: "red",
-  perda: "orange",
+  saida: "orange",
+  perda: "red",
 };
 
 const TIPO_LABEL: Record<TipoMovimentacao, string> = {
@@ -31,7 +29,7 @@ interface Props {
 }
 
 const columns = (
-  onDelete: (id: string) => void
+  onDelete: (id: string) => void,
 ): ColumnsType<MovimentacaoComProduto> => [
   {
     title: "Produto",
@@ -65,14 +63,14 @@ const columns = (
     dataIndex: "preco_custo_unitario",
     width: 130,
     responsive: ["lg"],
-    render: (preco: number | null) => formatCurrency(preco),
+    render: (preco: number | null) => displayMoney(preco),
   },
   {
     title: "Preço de venda",
     dataIndex: "preco_venda_unitario",
     width: 130,
     responsive: ["lg"],
-    render: (preco: number | null) => formatCurrency(preco),
+    render: (preco: number | null) => displayMoney(preco),
   },
   {
     title: "Valor total",
@@ -80,7 +78,7 @@ const columns = (
     responsive: ["lg"],
     render: (_: unknown, row: MovimentacaoComProduto) => {
       const preco = row.preco_custo_unitario ?? row.preco_venda_unitario;
-      return formatCurrency(preco != null ? row.quantidade * preco : null);
+      return displayMoney(preco != null ? row.quantidade * preco : null);
     },
   },
   {
@@ -101,7 +99,12 @@ const columns = (
   },
 ];
 
-function MovimentacaoTableOrList({ data, loading, pagination, onDelete }: Props) {
+function MovimentacaoTableOrList({
+  data,
+  loading,
+  pagination,
+  onDelete,
+}: Props) {
   const screens = useBreakpoint();
 
   if (screens.xs) {
