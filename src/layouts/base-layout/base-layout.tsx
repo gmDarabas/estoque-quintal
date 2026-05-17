@@ -20,7 +20,7 @@ import {
 } from "@ant-design/icons";
 import type { ItemType } from "antd/es/menu/interface";
 
-import { usePageTitle } from "../admin-layout/providers/page-title-context";
+import { usePageTitleContext } from "../admin-layout/providers/page-title-context";
 import { useTheme } from "@/contexts/theme-context";
 import ErrorBoundary from "@/components/error-boundary/error-boundary";
 
@@ -42,7 +42,7 @@ export interface LayoutProps {
 
 function BaseLayout({ menuItens }: LayoutProps) {
   const navigate = useNavigate();
-  const { pageTitle, showBack } = usePageTitle();
+  const { pageTitle, showBack } = usePageTitleContext();
   const { token } = theme.useToken();
   const { darkMode, toggleDarkMode } = useTheme();
   const [collapsed, setCollapsed] = useState(false);

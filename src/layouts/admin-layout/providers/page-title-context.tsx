@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, useEffect } from "react";
+import { useState, createContext, useContext, useLayoutEffect } from "react";
 
 interface PageTitleContextType {
   pageTitle?: string;
@@ -23,16 +23,26 @@ export function PageTitleProvider(props: any) {
   );
 }
 
-export function usePageTitle(title?: string, showBack: boolean = false) {
+export function usePageTitleContext() {
   const context = useContext(PageTitleContext);
   if (context === undefined) {
-    throw new Error(`useAuthContext must be used within a AuthContextProvider`);
+    throw new Error(`usePageTitleContext must be used within a PageTitleProvider`);
   }
+  return context;
+}
 
-  useEffect(() => {
-    context.setPageTitle(title);
-    context.setShowBack(showBack);
-  }, [title, showBack]);
+export function usePageTitle(title?: string, showBack: boolean = false) {
+  const context = usePageTitleContext();
+  const { setPageTitle, setShowBack } = context;
+
+  useLayoutEffect(() => {
+    setPageTitle(title);
+    setShowBack(showBack);
+    return () => {
+      setPageTitle(undefined);
+      setShowBack(false);
+    };
+  }, [title, showBack, setPageTitle, setShowBack]);
 
   return context;
 }
