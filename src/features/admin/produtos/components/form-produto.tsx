@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -12,14 +12,15 @@ import {
   Select,
   Tooltip,
 } from "antd";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { QuestionCircleOutlined, CopyOutlined } from "@ant-design/icons";
 import { useCreateProduto } from "../api/create";
 import { useGetProduto } from "../api/get-one";
 import { useUpdateProduto } from "../api/update";
 import { uploadFotoProduto } from "../api/upload-foto";
-import { CreateProdutoDto } from "../api/types";
+import { CreateProdutoDto, ProdutoComCategoria } from "../api/types";
 import SelectCategoria from "../../categorias/components/select-categoria";
 import FotoUpload from "./foto-upload";
+import CopiarProdutoModal from "./copiar-produto-modal";
 
 const UNIDADES = ["un", "kg", "g", "l", "ml", "cx", "pç", "m", "cm"];
 
@@ -31,6 +32,9 @@ export default function FormProduto() {
   const [form] = useForm<FormType>();
 
   const [fotoFile, setFotoFile] = useState<File | null>(null);
+  const [fotoUrlCopiada, setFotoUrlCopiada] = useState<string | null>(null);
+  const [copiarModalOpen, setCopiarModalOpen] = useState(false);
+  const saveMode = useRef<"save" | "saveAndNew">("save");
 
   const createProduto = useCreateProduto();
   const updateProduto = useUpdateProduto();
@@ -48,6 +52,21 @@ export default function FormProduto() {
       }
     : { unidade: "un", estoque_minimo: 0 };
 
+  const handleCopy = (p: ProdutoComCategoria) => {
+    form.setFieldsValue({
+      nome: p.nome,
+      descricao: p.descricao,
+      categoria_id: p.categoria_id,
+      estoque_minimo: p.estoque_minimo,
+      unidade: p.unidade,
+      preco_custo_atual: p.preco_custo_atual,
+      margem: p.margem,
+    });
+    setFotoUrlCopiada(p.foto_url ?? null);
+    setFotoFile(null);
+    setCopiarModalOpen(false);
+  };
+
   const onSubmit = async (values: FormType) => {
     if (id) {
       let foto_url = produto?.foto_url;
@@ -57,16 +76,33 @@ export default function FormProduto() {
       await updateProduto(id, { ...values, foto_url });
     } else {
       const novoProduto = await createProduto({ ...values });
+      let foto_url: string | undefined;
       if (fotoFile) {
-        const foto_url = await uploadFotoProduto(novoProduto.id, fotoFile);
+        foto_url = await uploadFotoProduto(novoProduto.id, fotoFile);
+      } else if (fotoUrlCopiada) {
+        foto_url = fotoUrlCopiada;
+      }
+      if (foto_url) {
         await updateProduto(novoProduto.id, { foto_url });
       }
-      navigate(`/produtos`);
+      if (saveMode.current === "saveAndNew") {
+        form.resetFields();
+        setFotoFile(null);
+        setFotoUrlCopiada(null);
+      } else {
+        navigate(`/produtos`);
+      }
     }
   };
 
   return (
     <>
+      <CopiarProdutoModal
+        open={copiarModalOpen}
+        onClose={() => setCopiarModalOpen(false)}
+        onCopy={handleCopy}
+      />
+
       {isLoading ? (
         <Skeleton />
       ) : (
@@ -79,6 +115,17 @@ export default function FormProduto() {
           onFinish={onSubmit}
           autoComplete="off"
         >
+          {!id && (
+            <div style={{ marginBottom: 16, textAlign: "right" }}>
+              <Button
+                icon={<CopyOutlined />}
+                onClick={() => setCopiarModalOpen(true)}
+              >
+                Copiar de outro produto
+              </Button>
+            </div>
+          )}
+
           <Row gutter={[16, 0]}>
             <Col xs={24} md={16}>
               <Form.Item
@@ -167,21 +214,33 @@ export default function FormProduto() {
 
           <Form.Item label="Foto">
             <FotoUpload
-              currentUrl={produto?.foto_url}
-              onFileSelect={setFotoFile}
+              currentUrl={fotoUrlCopiada ?? produto?.foto_url}
+              onFileSelect={(file) => { setFotoFile(file); setFotoUrlCopiada(null); }}
             />
           </Form.Item>
 
           <Row justify="end">
             <Col xs={24}>
               <Form.Item className="w-full mt-10 text-right">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="lg:w-auto w-full"
-                >
-                  Salvar
-                </Button>
+                <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", flexWrap: "wrap" }}>
+                  {!id && (
+                    <Button
+                      htmlType="submit"
+                      className="lg:w-auto w-full"
+                      onClick={() => { saveMode.current = "saveAndNew"; }}
+                    >
+                      Salvar e cadastrar outro
+                    </Button>
+                  )}
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="lg:w-auto w-full"
+                    onClick={() => { saveMode.current = "save"; }}
+                  >
+                    Salvar
+                  </Button>
+                </div>
               </Form.Item>
             </Col>
           </Row>

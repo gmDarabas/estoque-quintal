@@ -1,7 +1,7 @@
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, InputNumber, Row, Select, Typography } from "antd";
 import { useForm } from "antd/es/form/Form";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCreateMovimentacao } from "../api/create";
 import { CreateMovimentacaoDto, TipoMovimentacao } from "../api/types";
@@ -43,6 +43,7 @@ export default function FormMovimentacao() {
   const [form] = useForm<CreateMovimentacaoDto>();
   const navigate = useNavigate();
   const createMovimentacao = useCreateMovimentacao();
+  const saveMode = useRef<"save" | "saveAndNew">("save");
 
   const [tipo, setTipo] = useState<TipoMovimentacao | undefined>();
   const [selectedProduto, setSelectedProduto] =
@@ -72,7 +73,13 @@ export default function FormMovimentacao() {
 
   const onSubmit = async (values: CreateMovimentacaoDto) => {
     await createMovimentacao(values);
-    navigate("/movimentacoes");
+    if (saveMode.current === "saveAndNew") {
+      form.resetFields();
+      setTipo(undefined);
+      setSelectedProduto(null);
+    } else {
+      navigate("/movimentacoes");
+    }
   };
 
   return (
@@ -151,13 +158,23 @@ export default function FormMovimentacao() {
       <Row justify="end">
         <Col xs={24}>
           <Form.Item className="w-full mt-10 text-right">
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="lg:w-auto w-full"
-            >
-              Registrar
-            </Button>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", flexWrap: "wrap" }}>
+              <Button
+                htmlType="submit"
+                className="lg:w-auto w-full"
+                onClick={() => { saveMode.current = "saveAndNew"; }}
+              >
+                Registrar e adicionar novo
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="lg:w-auto w-full"
+                onClick={() => { saveMode.current = "save"; }}
+              >
+                Registrar
+              </Button>
+            </div>
           </Form.Item>
         </Col>
       </Row>
