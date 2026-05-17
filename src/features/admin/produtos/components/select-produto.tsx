@@ -1,8 +1,5 @@
 import { Select } from "antd";
-import {
-  ProdutoSelectOption,
-  useListProdutosSelect,
-} from "../api/list-select";
+import { ProdutoSelectOption, useListProdutosSelect } from "../api/list-select";
 
 type Props = {
   value?: string | null;
@@ -44,6 +41,7 @@ export default function SelectProduto({
         (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
       }
       onChange={handleChange}
+      style={{ width: "100%" }}
     />
   );
 }

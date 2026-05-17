@@ -16,6 +16,7 @@ const TIPO_COLOR: Record<TipoMovimentacao, string> = {
   perda: "orange",
 };
 
+
 const TIPO_LABEL: Record<TipoMovimentacao, string> = {
   entrada: "Entrada",
   saida: "Saída",
@@ -65,29 +66,37 @@ function MovimentacaoMobileList({
                     {item.quantidade} {item.produtos?.unidade ?? ""}
                   </Text>
                 </div>
-                <Text type="secondary" style={{ fontSize: 12 }}>
-                  {new Date(item.created_at).toLocaleString("pt-BR")}
-                </Text>
+                <div style={{ textAlign: "right" }}>
+                  {(item.preco_custo_unitario != null || item.preco_venda_unitario != null) && (
+                    <Text
+                      strong
+                      style={{
+                        display: "block",
+                        color: "#1677ff",
+                        fontSize: 15,
+                      }}
+                    >
+                      {formatCurrency(
+                        item.quantidade *
+                          (item.preco_custo_unitario ?? item.preco_venda_unitario)!
+                      )}
+                    </Text>
+                  )}
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    {new Date(item.created_at).toLocaleString("pt-BR")}
+                  </Text>
+                </div>
               </div>
               {(item.preco_custo_unitario != null || item.preco_venda_unitario != null) && (
                 <div style={{ display: "flex", gap: 16, marginTop: 6, flexWrap: "wrap" }}>
                   {item.preco_custo_unitario != null && (
                     <Text type="secondary" style={{ fontSize: 12 }}>
-                      Preço de custo: {formatCurrency(item.preco_custo_unitario)}
+                      Custo: {formatCurrency(item.preco_custo_unitario)}
                     </Text>
                   )}
                   {item.preco_venda_unitario != null && (
                     <Text type="secondary" style={{ fontSize: 12 }}>
-                      Preço de venda: {formatCurrency(item.preco_venda_unitario)}
-                    </Text>
-                  )}
-                  {(item.preco_custo_unitario != null || item.preco_venda_unitario != null) && (
-                    <Text type="secondary" style={{ fontSize: 12 }}>
-                      Valor total:{" "}
-                      {formatCurrency(
-                        item.quantidade *
-                          (item.preco_custo_unitario ?? item.preco_venda_unitario)!
-                      )}
+                      Venda: {formatCurrency(item.preco_venda_unitario)}
                     </Text>
                   )}
                 </div>
