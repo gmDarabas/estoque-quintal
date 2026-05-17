@@ -5,84 +5,6 @@
 - **Implantação** — útil desde o primeiro dia, funciona sem histórico
 - **Com histórico** — ganha valor após meses de uso; implantar depois
 
----
-
-## Fase 1: Implantação
-
-### Dashboard (Home) — KPIs do estoque atual
-
-> Foto do estoque em tempo real. Útil no primeiro dia de uso.
-
-**Indicadores:**
-- Valor total em estoque — `SUM(valor_total_estoque)` da `v_estoque_atual`
-- Quantidade de produtos cadastrados
-- Produtos abaixo do estoque mínimo — `COUNT WHERE abaixo_do_minimo = true`
-- Valor total de perdas do mês corrente
-
-**Sem views novas** — tudo disponível em `v_estoque_atual` + filtro simples em `movimentacoes`.
-
----
-
-### Alerta de Estoque Mínimo
-
-> Substitui o controle manual de "quando pedir mais". Alta prioridade prática.
-
-**Conteúdo:** tabela de produtos com `abaixo_do_minimo = true`, mostrando:
-- Nome, categoria, unidade
-- Quantidade atual vs. estoque mínimo
-- Quanto falta para atingir o mínimo (`estoque_minimo - quantidade_atual`)
-- Custo estimado para repor (quantidade faltante × `preco_custo_atual`)
-
-**Sem views novas** — filtro sobre `v_estoque_atual`.
-
----
-
-### Posição de Estoque (relatório estático)
-
-> Lista completa do estoque atual para conferência física ou auditoria.
-
-**Conteúdo:** todos os produtos com:
-- Quantidade atual, estoque mínimo, unidade
-- Preço de custo atual, custo médio ponderado
-- Valor total em estoque por produto
-- Agrupável por categoria
-
-**Sem views novas** — `v_estoque_atual` com join em `categorias`.
-
----
-
-### Valor de Estoque por Categoria
-
-> Mostra onde o capital está concentrado. Funciona com qualquer quantidade de produtos.
-
-**Conteúdo:** card ou gráfico de pizza com valor total por categoria.
-
-**Nova view sugerida: `v_estoque_por_categoria`**
-```sql
-select
-  c.id,
-  c.nome as categoria,
-  count(p.id) as qtd_produtos,
-  sum(p.valor_total_estoque) as valor_total
-from v_estoque_atual p
-left join categorias c on c.id = p.categoria_id
-group by c.id, c.nome;
-```
-
----
-
-### Registro de Perdas
-
-> Perdas são dinheiro jogado fora — monitorar desde o início cria cultura de controle.
-
-**Conteúdo:** tabela com filtro de período e produto:
-- Data, produto, quantidade perdida, valor de custo perdido
-- Total de perdas do período
-
-**Sem views novas** — query em `movimentacoes WHERE tipo = 'perda'` com join em `produtos`.
-
----
-
 ## Fase 2: Com Histórico (3+ meses de uso)
 
 ### Relatório Financeiro Mensal
@@ -90,12 +12,14 @@ group by c.id, c.nome;
 > Compara meses. Sem histórico, um único mês não diz nada.
 
 **Indicadores por mês:**
+
 - Faturamento bruto: `SUM(quantidade × preco_venda_unitario)` das saídas
 - CMV (custo da mercadoria vendida): `SUM(quantidade × preco_custo_medio)` das saídas
 - Lucro bruto e margem bruta %
 - Total de perdas (valor de custo)
 
 **Nova view: `v_resumo_mensal`**
+
 ```sql
 select
   date_trunc('month', created_at) as mes,
@@ -119,10 +43,12 @@ order by 1;
 > Precisa de volume de vendas razoável para ser representativo.
 
 **Conteúdo:** ranking de produtos por margem e lucro absoluto:
+
 - Receita total, CMV total, lucro bruto, margem %
 - Filtrável por período e categoria
 
 **Nova view: `v_margem_por_produto`**
+
 ```sql
 select
   p.id,
@@ -153,11 +79,13 @@ group by p.id, p.nome, p.categoria_id;
 > Clássico para priorizar compras e espaço físico. Requer histórico de vendas consolidado.
 
 **Lógica:** produtos ranqueados por faturamento acumulado, classificados em:
+
 - **A** — 80% do faturamento (poucos produtos, alta atenção)
 - **B** — 15% do faturamento
 - **C** — 5% do faturamento (muitos produtos, baixo impacto)
 
 **Nova view: `v_curva_abc`**
+
 ```sql
 with vendas as (
   select
@@ -199,6 +127,7 @@ order by r.receita desc;
 > Identifica produtos parados. Precisa de pelo menos 1 mês completo para ser relevante.
 
 **Cálculo:** `quantidade vendida no período / estoque médio no período`
+
 - Giro alto → produto se vende rápido, menos capital preso
 - Giro baixo → produto parado, risco de vencimento/obsolescência
 
@@ -208,10 +137,10 @@ order by r.receita desc;
 
 ## Resumo das Views Novas por Fase
 
-| View | Fase | Descrição |
-|---|---|---|
-| `v_estoque_por_categoria` | Implantação | Valor de estoque agrupado por categoria |
-| `v_resumo_mensal` | Com histórico | Receita, CMV, lucro e perdas por mês |
-| `v_margem_por_produto` | Com histórico | Margem bruta por produto |
-| `v_curva_abc` | Com histórico | Classificação ABC por faturamento |
-| `v_giro_estoque` | Com histórico | Giro de estoque por produto |
+| View                      | Fase          | Descrição                               |
+| ------------------------- | ------------- | --------------------------------------- |
+| `v_estoque_por_categoria` | Implantação   | Valor de estoque agrupado por categoria |
+| `v_resumo_mensal`         | Com histórico | Receita, CMV, lucro e perdas por mês    |
+| `v_margem_por_produto`    | Com histórico | Margem bruta por produto                |
+| `v_curva_abc`             | Com histórico | Classificação ABC por faturamento       |
+| `v_giro_estoque`          | Com histórico | Giro de estoque por produto             |

@@ -19,8 +19,8 @@ export type ListMovimentacaoParams = GetPageOptions & {
 };
 
 const ORDER_MAP: Record<OrderByMovimentacaoOption, { column: string; ascending: boolean }> = {
-  data_desc:       { column: "created_at",          ascending: false },
-  data_asc:        { column: "created_at",          ascending: true  },
+  data_desc:       { column: "data_movimentacao",   ascending: false },
+  data_asc:        { column: "data_movimentacao",   ascending: true  },
   quantidade_desc: { column: "quantidade",           ascending: false },
   valor_desc:      { column: "preco_custo_unitario", ascending: false },
 };
@@ -51,8 +51,8 @@ const listMovimentacoes = async ({
 
   if (tipo)       query = query.eq("tipo", tipo);
   if (produto_id) query = query.eq("produto_id", produto_id);
-  if (data_de)    query = query.gte("created_at", data_de);
-  if (data_ate)   query = query.lte("created_at", data_ate);
+  if (data_de)    query = query.gte("data_movimentacao", data_de);
+  if (data_ate)   query = query.lte("data_movimentacao", data_ate);
 
   const { data, count, error } = await query;
 

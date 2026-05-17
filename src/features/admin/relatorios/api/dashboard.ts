@@ -50,22 +50,22 @@ const fetchPeriodKpis = async (
       .select("quantidade,preco_custo_unitario")
       .eq("tipo", "entrada")
       .is("deleted_at", null)
-      .gte("created_at", dataDe)
-      .lte("created_at", dataAte),
+      .gte("data_movimentacao", dataDe)
+      .lte("data_movimentacao", dataAte),
     supabase
       .from("movimentacoes")
       .select("quantidade,preco_venda_unitario")
       .eq("tipo", "saida")
       .is("deleted_at", null)
-      .gte("created_at", dataDe)
-      .lte("created_at", dataAte),
+      .gte("data_movimentacao", dataDe)
+      .lte("data_movimentacao", dataAte),
     supabase
       .from("movimentacoes")
       .select("quantidade,produtos(preco_custo_atual)")
       .eq("tipo", "perda")
       .is("deleted_at", null)
-      .gte("created_at", dataDe)
-      .lte("created_at", dataAte),
+      .gte("data_movimentacao", dataDe)
+      .lte("data_movimentacao", dataAte),
   ]);
 
   if (e1) throw e1;

@@ -1,6 +1,7 @@
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, InputNumber, Row, Select, Typography } from "antd";
+import { Button, Col, DatePicker, Form, Input, InputNumber, Row, Select, Typography } from "antd";
 import { useForm } from "antd/es/form/Form";
+import dayjs, { Dayjs } from "dayjs";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCreateMovimentacao } from "../api/create";
@@ -39,8 +40,12 @@ const TIPO_OPTIONS = [
   { value: "perda", label: "Perda" },
 ];
 
+type FormValues = Omit<CreateMovimentacaoDto, "data_movimentacao"> & {
+  data_movimentacao?: Dayjs | null;
+};
+
 export default function FormMovimentacao() {
-  const [form] = useForm<CreateMovimentacaoDto>();
+  const [form] = useForm<FormValues>();
   const navigate = useNavigate();
   const createMovimentacao = useCreateMovimentacao();
   const saveMode = useRef<"save" | "saveAndNew">("save");
@@ -71,10 +76,15 @@ export default function FormMovimentacao() {
     form.setFieldValue("preco_venda_unitario", undefined);
   };
 
-  const onSubmit = async (values: CreateMovimentacaoDto) => {
-    await createMovimentacao(values);
+  const onSubmit = async (values: FormValues) => {
+    const dto: CreateMovimentacaoDto = {
+      ...values,
+      data_movimentacao: values.data_movimentacao?.toISOString() ?? null,
+    };
+    await createMovimentacao(dto);
     if (saveMode.current === "saveAndNew") {
       form.resetFields();
+      form.setFieldValue("data_movimentacao", dayjs());
       setTipo(undefined);
       setSelectedProduto(null);
     } else {
@@ -83,14 +93,37 @@ export default function FormMovimentacao() {
   };
 
   return (
-    <Form form={form} layout="vertical" onFinish={onSubmit} autoComplete="off">
-      <Form.Item
-        label="Produto"
-        name="produto_id"
-        rules={[{ required: true, message: "Selecione o produto" }]}
-      >
-        <SelectProduto onSelect={handleProdutoSelect} />
-      </Form.Item>
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={onSubmit}
+      autoComplete="off"
+      initialValues={{ data_movimentacao: dayjs() }}
+    >
+      <Row gutter={[16, 0]}>
+        <Col xs={24} md={16}>
+          <Form.Item
+            label="Produto"
+            name="produto_id"
+            rules={[{ required: true, message: "Selecione o produto" }]}
+          >
+            <SelectProduto onSelect={handleProdutoSelect} />
+          </Form.Item>
+        </Col>
+        <Col xs={24} md={8}>
+          <Form.Item
+            label="Data da movimentação"
+            name="data_movimentacao"
+            rules={[{ required: true, message: "Informe a data" }]}
+          >
+            <DatePicker
+              format="DD/MM/YYYY"
+              style={{ width: "100%" }}
+              placement="bottomLeft"
+            />
+          </Form.Item>
+        </Col>
+      </Row>
 
       <Row gutter={[16, 0]}>
         <Col xs={24} md={tipo === "entrada" || tipo === "saida" ? 8 : 12}>

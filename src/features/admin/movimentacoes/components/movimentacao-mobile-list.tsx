@@ -84,7 +84,7 @@ function MovimentacaoMobileList({
                     </Text>
                   )}
                   <Text type="secondary" style={{ fontSize: 12 }}>
-                    {new Date(item.created_at).toLocaleString("pt-BR")}
+                    {new Date(item.data_movimentacao).toLocaleString("pt-BR")}
                   </Text>
                 </div>
               </div>

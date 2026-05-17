@@ -13,6 +13,7 @@ const createMovimentacao = async (
     p_preco_custo_unitario: data.preco_custo_unitario ?? null,
     p_preco_venda_unitario: data.preco_venda_unitario ?? null,
     p_observacao: data.observacao ?? null,
+    p_data_movimentacao: data.data_movimentacao ?? null,
   });
 
   if (error) throw new Error(error.message);

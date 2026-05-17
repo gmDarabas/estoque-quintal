@@ -10,6 +10,7 @@ export type Movimentacao = {
   preco_custo_unitario?: number | null;
   preco_venda_unitario?: number | null;
   observacao?: string | null;
+  data_movimentacao: string;
   created_at: string;
   deleted_at?: string | null;
 };
@@ -26,4 +27,6 @@ export type CreateMovimentacaoDto = Pick<
   | "preco_custo_unitario"
   | "preco_venda_unitario"
   | "observacao"
->;
+> & {
+  data_movimentacao?: string | null;
+};

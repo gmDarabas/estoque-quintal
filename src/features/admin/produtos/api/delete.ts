@@ -17,7 +17,10 @@ const useDeleteProduto = (options?: Record<string, unknown>) => {
   const mutation = useMutation(async (id: string) => deleteProduto(id), {
     ...options,
     onSuccess: async () => {
-      await queryClient.invalidateQueries("produtos");
+      await Promise.all([
+        queryClient.invalidateQueries("produtos"),
+        queryClient.invalidateQueries("produtos-select"),
+      ]);
       notification.warning({ message: "Produto excluído com sucesso" });
     },
   });

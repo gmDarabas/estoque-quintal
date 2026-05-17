@@ -16,13 +16,20 @@ const createProduto = async (data: CreateProdutoDto): Promise<Produto> => {
 
 const useCreateProduto = (options?: Record<string, unknown>) => {
   const queryClient = useQueryClient();
-  const mutation = useMutation(async (params: CreateProdutoDto) => createProduto(params), {
-    ...options,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries("produtos");
-      notification.success({ message: "Produto cadastrado com sucesso" });
+  const mutation = useMutation(
+    async (params: CreateProdutoDto) => createProduto(params),
+    {
+      ...options,
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.invalidateQueries("produtos"),
+          queryClient.invalidateQueries("produtos-select"),
+        ]);
+
+        notification.success({ message: "Produto cadastrado com sucesso" });
+      },
     },
-  });
+  );
   return (data: CreateProdutoDto) => mutation.mutateAsync(data);
 };
 

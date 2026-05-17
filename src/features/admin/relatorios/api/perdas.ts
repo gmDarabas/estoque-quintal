@@ -26,12 +26,12 @@ const listPerdas = async (params: ListPerdasParams): Promise<Page<MovimentacaoCo
     .select("*, produtos(id, nome, unidade)", { count: "exact" })
     .eq("tipo", "perda")
     .is("deleted_at", null)
-    .order("created_at", { ascending: false })
+    .order("data_movimentacao", { ascending: false })
     .range(from, to);
 
   if (params.produto_id) query = query.eq("produto_id", params.produto_id);
-  if (params.data_de)    query = query.gte("created_at", params.data_de);
-  if (params.data_ate)   query = query.lte("created_at", params.data_ate);
+  if (params.data_de)    query = query.gte("data_movimentacao", params.data_de);
+  if (params.data_ate)   query = query.lte("data_movimentacao", params.data_ate);
 
   const { data, count, error } = await query;
   if (error) throw error;
@@ -48,8 +48,8 @@ const fetchPerdasTotais = async (
     .is("deleted_at", null);
 
   if (params.produto_id) query = query.eq("produto_id", params.produto_id);
-  if (params.data_de)    query = query.gte("created_at", params.data_de);
-  if (params.data_ate)   query = query.lte("created_at", params.data_ate);
+  if (params.data_de)    query = query.gte("data_movimentacao", params.data_de);
+  if (params.data_ate)   query = query.lte("data_movimentacao", params.data_ate);
 
   const { data, error } = await query;
   if (error) throw error;

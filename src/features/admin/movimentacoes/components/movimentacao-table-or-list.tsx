@@ -53,7 +53,7 @@ const columns = (
   },
   {
     title: "Data",
-    dataIndex: "created_at",
+    dataIndex: "data_movimentacao",
     width: 170,
     responsive: ["md"],
     render: (date: string) => new Date(date).toLocaleString("pt-BR"),

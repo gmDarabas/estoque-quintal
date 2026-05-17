@@ -19,14 +19,21 @@ const updateProduto = async ({ id, data }: UpdateParams): Promise<Produto> => {
 
 const useUpdateProduto = (options?: Record<string, unknown>) => {
   const queryClient = useQueryClient();
-  const mutation = useMutation(async (params: UpdateParams) => updateProduto(params), {
-    ...options,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries("produtos");
-      notification.success({ message: "Produto atualizado com sucesso" });
+  const mutation = useMutation(
+    async (params: UpdateParams) => updateProduto(params),
+    {
+      ...options,
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.invalidateQueries("produtos"),
+          queryClient.invalidateQueries("produtos-select"),
+        ]);
+        notification.success({ message: "Produto atualizado com sucesso" });
+      },
     },
-  });
-  return (id: string, data: UpdateProdutoDto) => mutation.mutateAsync({ id, data });
+  );
+  return (id: string, data: UpdateProdutoDto) =>
+    mutation.mutateAsync({ id, data });
 };
 
 export { updateProduto, useUpdateProduto };
