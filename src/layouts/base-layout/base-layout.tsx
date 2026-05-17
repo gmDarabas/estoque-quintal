@@ -76,7 +76,7 @@ function BaseLayout({ menuItens }: LayoutProps) {
           }}
         >
           <Sider
-            theme="light"
+            theme={darkMode ? "dark" : "light"}
             collapsible
             collapsed={collapsed}
             onCollapse={(value) => setCollapsed(value)}

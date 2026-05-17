@@ -53,7 +53,7 @@ function MenuDrawer({ menuItens }: LayoutProps) {
         open={open}
         key="menu"
         styles={{ body: { padding: 0 } }}
-        width={300}
+        size={300}
       >
         <Menu
           className="w-100"

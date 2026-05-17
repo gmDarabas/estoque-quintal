@@ -14,10 +14,14 @@ https://github.com/victorjean9/react-telefone-brasileiro
 const InputTelefone = ({ onChange, value, ...props }: Props) => {
   const prefixSelector = (
     <FormItem name="prefix" noStyle>
-      <Select style={{ width: 80 }} defaultValue={"55"}>
-        <Select.Option value="55">+55 </Select.Option>
-        <Select.Option value="11">+11 </Select.Option>
-      </Select>
+      <Select
+        style={{ width: 80 }}
+        defaultValue={"55"}
+        options={[
+          { value: "55", label: "+55" },
+          { value: "11", label: "+11" },
+        ]}
+      />
     </FormItem>
   );
 

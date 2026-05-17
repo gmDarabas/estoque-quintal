@@ -1,5 +1,15 @@
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
-import { Button, Col, DatePicker, Form, Input, InputNumber, Row, Select, Typography } from "antd";
+import {
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Row,
+  Select,
+  Typography,
+} from "antd";
 import { useForm } from "antd/es/form/Form";
 import dayjs, { Dayjs } from "dayjs";
 import { useRef, useState } from "react";
@@ -18,7 +28,12 @@ function IndicadorVariacaoCusto({
   custoAtual: number | null | undefined;
   custoNovo: number | null | undefined;
 }) {
-  if (custoAtual == null || custoAtual === 0 || custoNovo == null || custoNovo === custoAtual) {
+  if (
+    custoAtual == null ||
+    custoAtual === 0 ||
+    custoNovo == null ||
+    custoNovo === custoAtual
+  ) {
     return null;
   }
 
@@ -27,8 +42,7 @@ function IndicadorVariacaoCusto({
 
   return (
     <Text style={{ color: subindo ? "#ff4d4f" : "#52c41a", fontSize: 12 }}>
-      {subindo ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-      {" "}
+      {subindo ? <ArrowUpOutlined /> : <ArrowDownOutlined />}{" "}
       {Math.abs(diff).toFixed(1)}% em relação ao custo médio atual
     </Text>
   );
@@ -191,11 +205,20 @@ export default function FormMovimentacao() {
       <Row justify="end">
         <Col xs={24}>
           <Form.Item className="w-full mt-10 text-right">
-            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 8,
+                justifyContent: "flex-end",
+                flexWrap: "wrap",
+              }}
+            >
               <Button
                 htmlType="submit"
                 className="lg:w-auto w-full"
-                onClick={() => { saveMode.current = "saveAndNew"; }}
+                onClick={() => {
+                  saveMode.current = "saveAndNew";
+                }}
               >
                 Registrar e adicionar novo
               </Button>
@@ -203,7 +226,9 @@ export default function FormMovimentacao() {
                 type="primary"
                 htmlType="submit"
                 className="lg:w-auto w-full"
-                onClick={() => { saveMode.current = "save"; }}
+                onClick={() => {
+                  saveMode.current = "save";
+                }}
               >
                 Registrar
               </Button>
