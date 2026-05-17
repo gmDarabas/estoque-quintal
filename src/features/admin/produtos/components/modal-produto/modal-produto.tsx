@@ -1,12 +1,16 @@
 import {
   Button,
   Descriptions,
+  Drawer,
+  Grid,
   Image,
   Modal,
   Tag,
   Tooltip,
   Typography,
 } from "antd";
+
+const { useBreakpoint } = Grid;
 import {
   PictureOutlined,
   QuestionCircleOutlined,
@@ -42,6 +46,9 @@ type Props = {
 };
 
 export default function ModalProduto({ produto, onClose, onEdit }: Props) {
+  const screens = useBreakpoint();
+  const isMobile = !screens.sm;
+
   if (!produto) return null;
 
   const precoVendaSugerido = calcularPrecoSugerido(produto);
@@ -51,35 +58,48 @@ export default function ModalProduto({ produto, onClose, onEdit }: Props) {
     onClose();
   };
 
+  const footer = [
+    <Button key="fechar" onClick={onClose}>
+      Fechar
+    </Button>,
+    <Button key="editar" type="primary" onClick={handleEdit}>
+      Editar
+    </Button>,
+  ];
+
+  const conteudo = (
+    <div className="produto-modal">
+      <ProdutoImagem produto={produto} />
+      <ProdutoInfo produto={produto} />
+      <ProdutoDescricao descricao={produto.descricao} />
+      <EstoqueSection produto={produto} />
+      <PrecosSection produto={produto} precoVendaSugerido={precoVendaSugerido} />
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <Drawer
+        open
+        placement="bottom"
+        height="100dvh"
+        title="Informações do Produto"
+        onClose={onClose}
+        styles={{ body: { overflowY: "auto", padding: 0 } }}
+        footer={
+          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+            {footer}
+          </div>
+        }
+      >
+        {conteudo}
+      </Drawer>
+    );
+  }
+
   return (
-    <Modal
-      open
-      title="Informações do Produto"
-      onCancel={onClose}
-      footer={[
-        <Button key="fechar" onClick={onClose}>
-          Fechar
-        </Button>,
-
-        <Button key="editar" type="primary" onClick={handleEdit}>
-          Editar
-        </Button>,
-      ]}
-    >
-      <div className="produto-modal">
-        <ProdutoImagem produto={produto} />
-
-        <ProdutoInfo produto={produto} />
-
-        <ProdutoDescricao descricao={produto.descricao} />
-
-        <EstoqueSection produto={produto} />
-
-        <PrecosSection
-          produto={produto}
-          precoVendaSugerido={precoVendaSugerido}
-        />
-      </div>
+    <Modal open title="Informações do Produto" onCancel={onClose} footer={footer}>
+      {conteudo}
     </Modal>
   );
 }

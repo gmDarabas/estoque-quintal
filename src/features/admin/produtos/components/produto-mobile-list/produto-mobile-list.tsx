@@ -85,49 +85,39 @@ function FotoPreview({ fotoUrl }: { fotoUrl?: string | null }) {
 
 function ProdutoInfo({ item }: { item: ProdutoEstoque }) {
   return (
-    <div
-      className="produto-info"
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-      }}
-    >
-      <div>
-        <Text strong className="produto-nome">
-          {item.nome}
+    <div className="produto-info">
+      <Text strong className="produto-nome">
+        {item.nome}
+      </Text>
+
+      {item.categorias?.nome && (
+        <Text type="secondary" className="produto-categoria">
+          {item.categorias.nome}
         </Text>
+      )}
 
-        {item.categorias?.nome && (
-          <Text type="secondary" className="produto-categoria">
-            {item.categorias.nome}
-          </Text>
-        )}
+      <Tag color={item.abaixo_do_minimo ? "red" : "green"}>
+        {item.quantidade_atual} {item.unidade}
+      </Tag>
+    </div>
+  );
+}
 
-        <Tag color={item.abaixo_do_minimo ? "red" : "green"}>
-          {item.quantidade_atual} {item.unidade}
-        </Tag>
+function ProdutoRodape({ item }: { item: ProdutoEstoque }) {
+  const temRodape =
+    item.preco_custo_medio != null || item.valor_total_estoque != null;
 
-        {item.preco_custo_medio != null && (
-          <div style={{ marginTop: 6 }}>
-            <Text type="secondary" className="produto-metrica">
-              Custo médio: {displayMoney(item.preco_custo_medio)}
-            </Text>
-          </div>
-        )}
-      </div>
+  if (!temRodape) return <></>;
 
+  return (
+    <div className="produto-rodape">
+      {item.preco_custo_medio != null && (
+        <Text type="secondary" className="produto-metrica">
+          Custo médio: {displayMoney(item.preco_custo_medio)}
+        </Text>
+      )}
       {item.valor_total_estoque != null && (
-        <Text
-          strong
-          style={{
-            color: "#1677ff",
-            fontSize: 15,
-            display: "block",
-            flexShrink: 0,
-            marginLeft: 8,
-          }}
-        >
+        <Text strong className="produto-valor-total">
           {displayMoney(item.valor_total_estoque)}
         </Text>
       )}
@@ -166,11 +156,14 @@ function ProdutoCard({
         />,
       ]}
     >
-      <div className="produto-card-content">
-        <FotoPreview fotoUrl={item.foto_url} />
-        <div style={{ flex: 1, minWidth: 0 }} onClick={() => onView(item)}>
-          <ProdutoInfo item={item} />
+      <div onClick={() => onView(item)}>
+        <div className="produto-card-content">
+          <FotoPreview fotoUrl={item.foto_url} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <ProdutoInfo item={item} />
+          </div>
         </div>
+        <ProdutoRodape item={item} />
       </div>
     </Card>
   );

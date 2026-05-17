@@ -1,4 +1,5 @@
-import { Button, Col, Form, Input, InputNumber, Row, Select } from "antd";
+import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
+import { Button, Col, Form, Input, InputNumber, Row, Select, Typography } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +7,31 @@ import { useCreateMovimentacao } from "../api/create";
 import { CreateMovimentacaoDto, TipoMovimentacao } from "../api/types";
 import { ProdutoSelectOption } from "../../produtos/api/list-select";
 import SelectProduto from "../../produtos/components/select-produto";
+
+const { Text } = Typography;
+
+function IndicadorVariacaoCusto({
+  custoAtual,
+  custoNovo,
+}: {
+  custoAtual: number | null | undefined;
+  custoNovo: number | null | undefined;
+}) {
+  if (custoAtual == null || custoAtual === 0 || custoNovo == null || custoNovo === custoAtual) {
+    return null;
+  }
+
+  const diff = ((custoNovo - custoAtual) / custoAtual) * 100;
+  const subindo = diff > 0;
+
+  return (
+    <Text style={{ color: subindo ? "#ff4d4f" : "#52c41a", fontSize: 12 }}>
+      {subindo ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+      {" "}
+      {Math.abs(diff).toFixed(1)}% em relação ao custo médio atual
+    </Text>
+  );
+}
 
 const TIPO_OPTIONS = [
   { value: "entrada", label: "Entrada" },
@@ -21,6 +47,8 @@ export default function FormMovimentacao() {
   const [tipo, setTipo] = useState<TipoMovimentacao | undefined>();
   const [selectedProduto, setSelectedProduto] =
     useState<ProdutoSelectOption | null>(null);
+
+  const precoCustoNovo = Form.useWatch("preco_custo_unitario", form);
 
   const handleProdutoSelect = (product: ProdutoSelectOption | null) => {
     setSelectedProduto(product);
@@ -81,6 +109,12 @@ export default function FormMovimentacao() {
             <Form.Item
               label="Preço de custo unitário"
               name="preco_custo_unitario"
+              extra={
+                <IndicadorVariacaoCusto
+                  custoAtual={selectedProduto?.preco_custo_atual}
+                  custoNovo={precoCustoNovo}
+                />
+              }
             >
               <InputNumber
                 style={{ width: "100%" }}
