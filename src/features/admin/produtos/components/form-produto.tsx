@@ -8,10 +8,10 @@ import {
   InputNumber,
   Button,
   Form,
-  Skeleton,
   Select,
   Tooltip,
 } from "antd";
+import FormWithSkeleton from "@/components/form-with-skeleton/form-with-skeleton";
 import { QuestionCircleOutlined, CopyOutlined } from "@ant-design/icons";
 import { useCreateProduto } from "../api/create";
 import { useGetProduto } from "../api/get-one";
@@ -20,6 +20,7 @@ import { uploadFotoProduto } from "../api/upload-foto";
 import { CreateProdutoDto, ProdutoComCategoria } from "../api/types";
 import { useCreateMovimentacao } from "../../movimentacoes/api/create";
 import SelectCategoria from "../../categorias/components/select-categoria";
+import SelectFornecedor from "../../fornecedores/components/select-fornecedor";
 import FotoUpload from "./foto-upload";
 import CopiarProdutoModal from "./copiar-produto-modal";
 
@@ -50,6 +51,7 @@ export default function FormProduto() {
         nome: produto.nome,
         descricao: produto.descricao,
         categoria_id: produto.categoria_id,
+        fornecedor_id: produto.fornecedor_id,
         estoque_minimo: produto.estoque_minimo,
         unidade: produto.unidade,
         preco_custo_atual: produto.preco_custo_atual,
@@ -63,6 +65,7 @@ export default function FormProduto() {
       nome: p.nome,
       descricao: p.descricao,
       categoria_id: p.categoria_id,
+      fornecedor_id: p.fornecedor_id,
       estoque_minimo: p.estoque_minimo,
       unidade: p.unidade,
       preco_custo_atual: p.preco_custo_atual,
@@ -125,10 +128,8 @@ export default function FormProduto() {
         onCopy={handleCopy}
       />
 
-      {isLoading ? (
-        <Skeleton />
-      ) : (
-        <Form
+      <FormWithSkeleton
+          loading={isLoading}
           form={form}
           id="form-produto"
           name="produto"
@@ -168,6 +169,14 @@ export default function FormProduto() {
             <Col xs={24} md={8}>
               <Form.Item label="Categoria" name="categoria_id">
                 <SelectCategoria />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={[16, 0]}>
+            <Col xs={24} md={12}>
+              <Form.Item label="Fornecedor" name="fornecedor_id">
+                <SelectFornecedor />
               </Form.Item>
             </Col>
           </Row>
@@ -295,8 +304,7 @@ export default function FormProduto() {
               </Form.Item>
             </Col>
           </Row>
-        </Form>
-      )}
+        </FormWithSkeleton>
     </>
   );
 }

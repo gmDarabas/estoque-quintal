@@ -48,7 +48,30 @@ Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 ```env
 VITE_SUPABASE_URL=sua_url_do_supabase
 VITE_SUPABASE_TOKEN=sua_chave_anonima_do_supabase
+
+# Backup local (opcional)
+SUPABASE_DB_URL=postgresql://postgres:[senha]@db.[project-ref].supabase.co:5432/postgres
+PG_LOCAL_PASSWORD=backup
 ```
+
+A senha do banco está em **Supabase → Settings → Database → Connection string (Direct connection)**.
+
+## Backup
+
+Os backups são feitos via Docker e salvos em `.pg_backups/` (não versionado).
+
+```bash
+# Fazer backup do Supabase → .pg_backups/backup_YYYYMMDD_HHMMSS.sql.gz
+./backup.sh
+
+# Subir postgres local para inspecionar backups
+docker compose up -d db
+
+# Restaurar um backup no postgres local
+docker compose exec db sh -c "gunzip -c /backups/backup_YYYYMMDD_HHMMSS.sql.gz | psql -U postgres estoque_backup"
+```
+
+O postgres local fica disponível em `localhost:5432` com usuário `postgres` e senha definida em `PG_LOCAL_PASSWORD`.
 
 ## Configuração do Supabase
 

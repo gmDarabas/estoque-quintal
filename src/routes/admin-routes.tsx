@@ -6,6 +6,7 @@ import {
   FallOutlined,
   HomeOutlined,
   LogoutOutlined,
+  ShopOutlined,
   SwapOutlined,
   TableOutlined,
   WarningOutlined,
@@ -21,10 +22,13 @@ import PageCadastroMovimentacao from "@/features/admin/movimentacoes/page-cadast
 import PagePosicaoEstoque from "@/features/admin/relatorios/page-posicao-estoque";
 import PageEstoqueMinimo from "@/features/admin/relatorios/page-estoque-minimo";
 import PagePerdas from "@/features/admin/relatorios/page-perdas";
+import PageFornecedores from "@/features/admin/fornecedores/page-fornecedores";
+import PageCadastroFornecedor from "@/features/admin/fornecedores/page-cadastro-fornecedor";
 
 const menuItens: ItemType[] = [
   { key: "/home", label: "Home", icon: <HomeOutlined /> },
   { key: "/produtos", label: "Produtos", icon: <AppstoreOutlined /> },
+  { key: "/fornecedores", label: "Fornecedores", icon: <ShopOutlined /> },
   { key: "/movimentacoes", label: "Movimentações", icon: <SwapOutlined /> },
   {
     key: "relatorios",
@@ -54,6 +58,9 @@ export default function AdminRoutes() {
       <Route path="produtos" element={<PageProdutos />} />
       <Route path="produto/cadastrar" element={<PageCadastroProduto />} />
       <Route path="produto/:id" element={<PageCadastroProduto />} />
+      <Route path="fornecedores" element={<PageFornecedores />} />
+      <Route path="fornecedor/cadastrar" element={<PageCadastroFornecedor />} />
+      <Route path="fornecedor/:id" element={<PageCadastroFornecedor />} />
       <Route path="movimentacoes" element={<PageMovimentacoes />} />
       <Route
         path="movimentacao/cadastrar"

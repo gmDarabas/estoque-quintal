@@ -1,4 +1,5 @@
 import { Categoria } from "../../categorias/api/types";
+import { Fornecedor } from "../../fornecedores/api/types";
 
 export type Produto = {
   id: string;
@@ -6,6 +7,7 @@ export type Produto = {
   nome: string;
   descricao?: string | null;
   categoria_id?: string | null;
+  fornecedor_id?: string | null;
   quantidade_atual: number;
   estoque_minimo: number;
   unidade: string;
@@ -19,6 +21,7 @@ export type Produto = {
 
 export type ProdutoComCategoria = Produto & {
   categorias?: Pick<Categoria, 'id' | 'nome'> | null;
+  fornecedores?: Pick<Fornecedor, 'id' | 'nome'> | null;
 };
 
 export type ProdutoEstoque = ProdutoComCategoria & {

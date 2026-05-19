@@ -30,54 +30,80 @@
 ### View v_estoque_atual
 
 ```sql
-create view v_estoque_atual as
-  with entradas as (
+create or replace view public.v_estoque_atual as
+with
+  entradas as (
     select
-      produto_id,
-      sum(quantidade) as qtd_total,
-      sum(quantidade * preco_custo_unitario) as valor_total
-    from movimentacoes
-    where tipo = 'entrada'
-      and preco_custo_unitario is not null
-      and deleted_at is null
-    group by produto_id
+      movimentacoes.produto_id,
+      sum(movimentacoes.quantidade) as qtd_total,
+      sum(
+        movimentacoes.quantidade * movimentacoes.preco_custo_unitario
+      ) as valor_total
+    from
+      movimentacoes
+    where
+      movimentacoes.tipo = 'entrada'::tipo_movimentacao
+      and movimentacoes.preco_custo_unitario is not null
+      and movimentacoes.deleted_at is null
+    group by
+      movimentacoes.produto_id
   ),
   custo_medio as (
     select
-      produto_id,
-      valor_total / nullif(qtd_total, 0) as preco_custo_medio
-    from entradas
+      entradas.produto_id,
+      entradas.valor_total / NULLIF(entradas.qtd_total, 0::numeric) as preco_custo_medio
+    from
+      entradas
   ),
   saldo as (
     select
-      produto_id,
-      coalesce(sum(
-        case
-          when tipo = 'entrada' then quantidade
-          when tipo in ('saida', 'perda') then -quantidade
-        end
-      ), 0) as quantidade_atual
-    from movimentacoes
-    where deleted_at is null
-    group by produto_id
+      movimentacoes.produto_id,
+      COALESCE(
+        sum(
+          case
+            when movimentacoes.tipo = 'entrada'::tipo_movimentacao then movimentacoes.quantidade
+            when movimentacoes.tipo = any (
+              array[
+                'saida'::tipo_movimentacao,
+                'perda'::tipo_movimentacao
+              ]
+            ) then - movimentacoes.quantidade
+            else null::numeric
+          end
+        ),
+        0::numeric
+      ) as quantidade_atual
+    from
+      movimentacoes
+    where
+      movimentacoes.deleted_at is null
+    group by
+      movimentacoes.produto_id
   )
-  select
-    p.id,
-    p.nome,
-    p.descricao,
-    p.unidade,
-    p.estoque_minimo,
-    p.categoria_id,
-    p.foto_url,
-    p.preco_custo_atual,
-    p.created_at,
-    p.updated_at,
-    coalesce(s.quantidade_atual, 0) as quantidade_atual,
-    cm.preco_custo_medio,
-    coalesce(s.quantidade_atual, 0) * cm.preco_custo_medio as valor_total_estoque,
-    coalesce(s.quantidade_atual, 0) <= p.estoque_minimo as abaixo_do_minimo
-  from produtos p
+select
+  p.id,
+  p.codigo,
+  p.nome,
+  p.descricao,
+  p.unidade,
+  p.estoque_minimo,
+  p.categoria_id,
+  p.foto_url,
+  p.preco_custo_atual,
+  p.created_at,
+  p.updated_at,
+  COALESCE(s.quantidade_atual, 0::numeric) as quantidade_atual,
+  cm.preco_custo_medio,
+  COALESCE(s.quantidade_atual, 0::numeric) * cm.preco_custo_medio as valor_total_estoque,
+  COALESCE(s.quantidade_atual, 0::numeric) < p.estoque_minimo as abaixo_do_minimo,
+  p.margem,
+  p.fornecedor_id,
+  f.nome as fornecedor_nome
+from
+  produtos p
   left join saldo s on s.produto_id = p.id
   left join custo_medio cm on cm.produto_id = p.id
-  where p.deleted_at is null;
+  left join fornecedores f on f.id = p.fornecedor_id
+where
+  p.deleted_at is null;
 ```

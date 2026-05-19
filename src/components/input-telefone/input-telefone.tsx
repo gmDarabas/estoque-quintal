@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { Input, Select } from "antd";
 import FormItem from "antd/es/form/FormItem";
 
@@ -72,12 +71,14 @@ const InputTelefone = ({ onChange, value, ...props }: Props) => {
     return value && value.replace(/[^0-9]/g, "");
   }
 
-  return <Input addonBefore={prefixSelector} value={value} onChange={onLocalChange} {...props} />;
-};
-
-InputTelefone.propTypes = {
-  value: PropTypes.string,
-  onChange: PropTypes.func,
+  return (
+    <Input
+      addonBefore={prefixSelector}
+      value={value}
+      onChange={onLocalChange}
+      {...props}
+    />
+  );
 };
 
 InputTelefone.defaultProps = {

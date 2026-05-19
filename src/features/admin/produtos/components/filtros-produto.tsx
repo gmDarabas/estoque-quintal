@@ -3,6 +3,7 @@ import { DownOutlined, FilterOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { OrderByOption } from "../api/list";
 import SelectCategoria from "@/features/admin/categorias/components/select-categoria";
+import SelectFornecedor from "@/features/admin/fornecedores/components/select-fornecedor";
 
 const { Search } = Input;
 
@@ -16,6 +17,7 @@ const ORDER_OPTIONS = [
 export type FiltrosProdutoValue = {
   q?: string;
   categoriaId?: string;
+  fornecedorId?: string;
   abaixoMinimo: boolean;
   orderBy: OrderByOption;
 };
@@ -28,11 +30,13 @@ export default function FiltrosProduto({ onChange }: Props) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [q, setQ] = useState<string | undefined>();
   const [categoriaId, setCategoriaId] = useState<string | undefined>();
+  const [fornecedorId, setFornecedorId] = useState<string | undefined>();
   const [abaixoMinimo, setAbaixoMinimo] = useState(false);
   const [orderBy, setOrderBy] = useState<OrderByOption>("nome_asc");
 
   const activeFiltersCount = [
     !!categoriaId,
+    !!fornecedorId,
     abaixoMinimo,
     orderBy !== "nome_asc",
   ].filter(Boolean).length;
@@ -40,32 +44,39 @@ export default function FiltrosProduto({ onChange }: Props) {
   const emit = (
     newQ: string | undefined,
     newCategoriaId: string | undefined,
+    newFornecedorId: string | undefined,
     newAbaixoMinimo: boolean,
     newOrderBy: OrderByOption,
   ) => {
-    onChange({ q: newQ, categoriaId: newCategoriaId, abaixoMinimo: newAbaixoMinimo, orderBy: newOrderBy });
+    onChange({ q: newQ, categoriaId: newCategoriaId, fornecedorId: newFornecedorId, abaixoMinimo: newAbaixoMinimo, orderBy: newOrderBy });
   };
 
   const onSearch = (value: string) => {
     const next = value || undefined;
     setQ(next);
-    emit(next, categoriaId, abaixoMinimo, orderBy);
+    emit(next, categoriaId, fornecedorId, abaixoMinimo, orderBy);
   };
 
   const onChangeCategoria = (value: string | null) => {
     const next = value ?? undefined;
     setCategoriaId(next);
-    emit(q, next, abaixoMinimo, orderBy);
+    emit(q, next, fornecedorId, abaixoMinimo, orderBy);
+  };
+
+  const onChangeFornecedor = (value: string | null) => {
+    const next = value ?? undefined;
+    setFornecedorId(next);
+    emit(q, categoriaId, next, abaixoMinimo, orderBy);
   };
 
   const onChangeAbaixoMinimo = (checked: boolean) => {
     setAbaixoMinimo(checked);
-    emit(q, categoriaId, checked, orderBy);
+    emit(q, categoriaId, fornecedorId, checked, orderBy);
   };
 
   const onChangeOrderBy = (value: OrderByOption) => {
     setOrderBy(value);
-    emit(q, categoriaId, abaixoMinimo, value);
+    emit(q, categoriaId, fornecedorId, abaixoMinimo, value);
   };
 
   return (
@@ -105,6 +116,14 @@ export default function FiltrosProduto({ onChange }: Props) {
               value={categoriaId ?? null}
               onChange={onChangeCategoria}
               placeholder="Filtrar por categoria"
+              style={{ width: "100%" }}
+            />
+          </Col>
+          <Col xs={24} sm={12}>
+            <SelectFornecedor
+              value={fornecedorId ?? null}
+              onChange={onChangeFornecedor}
+              placeholder="Filtrar por fornecedor"
               style={{ width: "100%" }}
             />
           </Col>

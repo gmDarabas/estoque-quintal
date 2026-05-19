@@ -35,11 +35,12 @@ export default function PageProdutos() {
     });
   };
 
-  const handleFiltrosChange = ({ q, categoriaId, abaixoMinimo, orderBy }: FiltrosProdutoValue) => {
+  const handleFiltrosChange = ({ q, categoriaId, fornecedorId, abaixoMinimo, orderBy }: FiltrosProdutoValue) => {
     handleFilterChange({
       fetchParams: {
         q,
         categoria_id: categoriaId,
+        fornecedor_id: fornecedorId,
         abaixo_do_minimo: abaixoMinimo || undefined,
         orderBy,
       },

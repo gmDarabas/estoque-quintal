@@ -9,6 +9,7 @@ export type ListProdutoResult = Page<ProdutoEstoque>;
 export type ListProdutoParams = GetPageOptions & {
   q?: string;
   categoria_id?: string;
+  fornecedor_id?: string;
   abaixo_do_minimo?: boolean;
   orderBy?: OrderByOption;
 };
@@ -25,6 +26,7 @@ const listProdutos = async ({
   rpp,
   q,
   categoria_id,
+  fornecedor_id,
   abaixo_do_minimo,
   orderBy = "nome_asc",
 }: ListProdutoParams): Promise<ListProdutoResult> => {
@@ -38,12 +40,13 @@ const listProdutos = async ({
 
   let query = supabase
     .from("v_estoque_atual")
-    .select("*, categorias(id, nome)", { count: "exact" })
+    .select("*, categorias(id, nome), fornecedores(id, nome)", { count: "exact" })
     .order(column, { ascending, nullsFirst })
     .range(from, to);
 
   if (q)               query = query.or(`codigo.ilike.%${q}%,nome.ilike.%${q}%,descricao.ilike.%${q}%`);
   if (categoria_id)    query = query.eq("categoria_id", categoria_id);
+  if (fornecedor_id)   query = query.eq("fornecedor_id", fornecedor_id);
   if (abaixo_do_minimo) query = query.eq("abaixo_do_minimo", true);
 
   const { data, count, error } = await query;
