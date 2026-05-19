@@ -1,22 +1,43 @@
-import { useQuery } from "react-query";
+import usePaginator from "@/lib/use-paginator";
+import { GetPageOptions, Page } from "@/types/interfaces";
 import { Categoria } from "./types";
 import { supabase } from "@/supabaseClient";
 
-const listCategorias = async (): Promise<Categoria[]> => {
-  const { data, error } = await supabase
+export type ListCategoriasParams = GetPageOptions & { q?: string };
+
+const listCategorias = async ({
+  page,
+  rpp,
+  q,
+}: ListCategoriasParams): Promise<Page<Categoria>> => {
+  page = page || 1;
+  rpp = rpp || 15;
+
+  const from = (page - 1) * rpp;
+  const to = from + rpp - 1;
+
+  let query = supabase
     .from("categorias")
-    .select("*")
+    .select("*", { count: "exact" })
     .is("deleted_at", null)
-    .order("nome", { ascending: true });
+    .order("nome", { ascending: true })
+    .range(from, to);
+
+  if (q) query = query.ilike("nome", `%${q}%`);
+
+  const { data, count, error } = await query;
 
   if (error) throw error;
-  return data ?? [];
+
+  return { list: data ?? [], totalCount: count ?? 0, page, rpp };
 };
 
-const useListCategorias = () => {
-  return useQuery({
+const useListCategorias = ({ page = 1, rpp = 15 }: GetPageOptions = {}) => {
+  return usePaginator<Categoria>({
     queryKey: ["categorias"],
-    queryFn: listCategorias,
+    fetch: listCategorias,
+    page,
+    rpp,
   });
 };
 

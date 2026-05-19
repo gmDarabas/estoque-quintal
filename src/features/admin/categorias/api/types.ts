@@ -7,3 +7,4 @@ export type Categoria = {
 };
 
 export type CreateCategoriaDto = Pick<Categoria, 'nome'>;
+export type UpdateCategoriaDto = Partial<CreateCategoriaDto>;

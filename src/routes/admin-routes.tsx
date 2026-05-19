@@ -9,6 +9,7 @@ import {
   ShopOutlined,
   SwapOutlined,
   TableOutlined,
+  TagsOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import NotFoundRedirect from "./not-found-redirect";
@@ -24,11 +25,14 @@ import PageEstoqueMinimo from "@/features/admin/relatorios/page-estoque-minimo";
 import PagePerdas from "@/features/admin/relatorios/page-perdas";
 import PageFornecedores from "@/features/admin/fornecedores/page-fornecedores";
 import PageCadastroFornecedor from "@/features/admin/fornecedores/page-cadastro-fornecedor";
+import PageCategorias from "@/features/admin/categorias/page-categorias";
+import PageCadastroCategoria from "@/features/admin/categorias/page-cadastro-categoria";
 
 const menuItens: ItemType[] = [
   { key: "/home", label: "Home", icon: <HomeOutlined /> },
   { key: "/produtos", label: "Produtos", icon: <AppstoreOutlined /> },
   { key: "/fornecedores", label: "Fornecedores", icon: <ShopOutlined /> },
+  { key: "/categorias", label: "Categorias", icon: <TagsOutlined /> },
   { key: "/movimentacoes", label: "Movimentações", icon: <SwapOutlined /> },
   {
     key: "relatorios",
@@ -61,6 +65,9 @@ export default function AdminRoutes() {
       <Route path="fornecedores" element={<PageFornecedores />} />
       <Route path="fornecedor/cadastrar" element={<PageCadastroFornecedor />} />
       <Route path="fornecedor/:id" element={<PageCadastroFornecedor />} />
+      <Route path="categorias" element={<PageCategorias />} />
+      <Route path="categoria/cadastrar" element={<PageCadastroCategoria />} />
+      <Route path="categoria/:id" element={<PageCadastroCategoria />} />
       <Route path="movimentacoes" element={<PageMovimentacoes />} />
       <Route
         path="movimentacao/cadastrar"

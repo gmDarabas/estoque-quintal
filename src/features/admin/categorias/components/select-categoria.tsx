@@ -20,7 +20,8 @@ export default function SelectCategoria({
 }: Props) {
   const [search, setSearch] = useState("");
 
-  const { data: categorias = [] } = useListCategorias();
+  const { data: pageData } = useListCategorias({ page: 1, rpp: 15 });
+  const categorias = pageData?.list ?? [];
   const createCategoria = useCreateCategoria();
 
   const options = useMemo(() => {
