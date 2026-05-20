@@ -13,9 +13,9 @@ const columns: ColumnsType<ProdutoEstoque> = [
   { title: "Produto", dataIndex: "nome" },
   {
     title: "Categoria",
-    dataIndex: "categorias",
+    dataIndex: "categoria",
     responsive: ["md"],
-    render: (c: ProdutoEstoque["categorias"]) => c?.nome ?? "—",
+    render: (c: ProdutoEstoque["categoria"]) => c?.nome ?? "—",
   },
   {
     title: "Qtd Atual",
@@ -58,7 +58,11 @@ const columns: ColumnsType<ProdutoEstoque> = [
   },
 ];
 
-export default function TabelaEstoqueMinimo({ data, loading, pagination }: Props) {
+export default function TabelaEstoqueMinimo({
+  data,
+  loading,
+  pagination,
+}: Props) {
   return (
     <Table
       columns={columns}

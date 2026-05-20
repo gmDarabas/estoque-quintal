@@ -65,11 +65,10 @@ const columns = (
   { title: "Nome", dataIndex: "nome", width: "25%" },
   {
     title: "Categoria",
-    dataIndex: "categorias",
+    dataIndex: "categoria",
     width: "15%",
     responsive: ["md"],
-    render: (categorias: ProdutoEstoque["categorias"]) =>
-      categorias?.nome ?? "—",
+    render: (categoria: ProdutoEstoque["categoria"]) => categoria?.nome ?? "—",
   },
   {
     title: "Quantidade",

@@ -4,6 +4,7 @@ name: estoque-front
 
 services:
   app:
+    container_name: estoque_app
     build:
       context: .
       dockerfile: Dockerfile

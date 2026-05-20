@@ -28,7 +28,10 @@ const useUpdateProduto = (options?: Record<string, unknown>) => {
           queryClient.invalidateQueries("produtos"),
           queryClient.invalidateQueries("produtos-select"),
         ]);
-        notification.success({ message: "Produto atualizado com sucesso" });
+
+        if (!options?.silent) {
+          notification.success({ message: "Produto atualizado com sucesso" });
+        }
       },
     },
   );
