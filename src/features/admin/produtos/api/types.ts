@@ -20,8 +20,8 @@ export type Produto = {
 };
 
 export type ProdutoComCategoria = Produto & {
-  categorias?: Pick<Categoria, 'id' | 'nome'> | null;
-  fornecedores?: Pick<Fornecedor, 'id' | 'nome'> | null;
+  categoria?: Pick<Categoria, 'id' | 'nome'> | null;
+  fornecedor?: Pick<Fornecedor, 'id' | 'nome'> | null;
 };
 
 export type ProdutoEstoque = ProdutoComCategoria & {

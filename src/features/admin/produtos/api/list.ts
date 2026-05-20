@@ -40,7 +40,7 @@ const listProdutos = async ({
 
   let query = supabase
     .from("v_estoque_atual")
-    .select("*, categorias(id, nome), fornecedores(id, nome)", { count: "exact" })
+    .select("*, categoria:categorias(id, nome), fornecedor:fornecedores(id, nome)", { count: "exact" })
     .order(column, { ascending, nullsFirst })
     .range(from, to);
 

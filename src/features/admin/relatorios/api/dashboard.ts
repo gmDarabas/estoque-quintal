@@ -99,7 +99,7 @@ const fetchPeriodKpis = async (
 const fetchEstoquePorCategoria = async (): Promise<EstoquePorCategoria[]> => {
   const { data, error } = await supabase
     .from("v_estoque_atual")
-    .select("valor_total_estoque, categorias(nome)");
+    .select("valor_total_estoque, categoria:categorias(nome)");
 
   if (error) throw error;
 
@@ -107,7 +107,7 @@ const fetchEstoquePorCategoria = async (): Promise<EstoquePorCategoria[]> => {
 
   for (const row of data ?? []) {
     const nome =
-      (row.categorias as unknown as { nome: string } | null)?.nome ??
+      (row.categoria as unknown as { nome: string } | null)?.nome ??
       "Sem categoria";
     const atual = map.get(nome) ?? { qtd: 0, valor: 0 };
     map.set(nome, {

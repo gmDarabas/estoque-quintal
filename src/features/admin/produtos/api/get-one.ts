@@ -7,7 +7,7 @@ const getOneProduto = async (id: string | undefined): Promise<ProdutoComCategori
 
   const { data, error } = await supabase
     .from("produtos")
-    .select("*, categorias(id, nome)")
+    .select("*, categoria:categorias(id, nome), fornecedor:fornecedores(id, nome)")
     .eq("id", id)
     .is("deleted_at", null)
     .single();

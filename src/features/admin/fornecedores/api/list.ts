@@ -1,4 +1,3 @@
-import { useQuery } from "react-query";
 import usePaginator from "@/lib/use-paginator";
 import { GetPageOptions, Page } from "@/types/interfaces";
 import { Fornecedor } from "./types";
@@ -38,22 +37,4 @@ const useListFornecedores = ({ page = 1, rpp = 15 }: GetPageOptions) => {
   });
 };
 
-const listFornecedoresSelect = async (): Promise<Fornecedor[]> => {
-  const { data, error } = await supabase
-    .from("fornecedores")
-    .select("*")
-    .is("deleted_at", null)
-    .order("nome", { ascending: true });
-
-  if (error) throw error;
-  return data ?? [];
-};
-
-const useListFornecedoresSelect = () => {
-  return useQuery({
-    queryKey: ["fornecedores-select"],
-    queryFn: listFornecedoresSelect,
-  });
-};
-
-export { listFornecedores, useListFornecedores, listFornecedoresSelect, useListFornecedoresSelect };
+export { listFornecedores, useListFornecedores };

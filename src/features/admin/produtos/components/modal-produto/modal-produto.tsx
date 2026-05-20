@@ -131,7 +131,7 @@ function ProdutoInfo({ produto }: { produto: ProdutoEstoque }) {
         <Typography.Title level={4} style={{ margin: 0 }}>
           {produto.nome}
         </Typography.Title>
-        {produto.categorias?.nome && <Tag>{produto.categorias.nome}</Tag>}
+        {produto.categoria?.nome && <Tag>{produto.categoria.nome}</Tag>}
       </div>
       {produto.codigo && (
         <Text type="secondary" style={{ fontSize: 13 }}>

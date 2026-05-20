@@ -97,9 +97,9 @@ function ProdutoInfo({ item }: { item: ProdutoEstoque }) {
         )}
       </div>
 
-      {item.categorias?.nome && (
+      {item.categoria?.nome && (
         <Text type="secondary" className="produto-categoria">
-          {item.categorias.nome}
+          {item.categoria.nome}
         </Text>
       )}
 

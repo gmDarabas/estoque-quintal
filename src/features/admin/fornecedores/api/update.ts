@@ -22,10 +22,7 @@ const useUpdateFornecedor = (options?: Record<string, unknown>) => {
   const mutation = useMutation(async (params: UpdateParams) => updateFornecedor(params), {
     ...options,
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries("fornecedores"),
-        queryClient.invalidateQueries("fornecedores-select"),
-      ]);
+      await queryClient.invalidateQueries("fornecedores");
       notification.success({ message: "Fornecedor atualizado com sucesso" });
     },
   });

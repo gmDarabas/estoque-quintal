@@ -17,10 +17,7 @@ const useDeleteFornecedor = (options?: Record<string, unknown>) => {
   const mutation = useMutation(async (id: string) => deleteFornecedor(id), {
     ...options,
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries("fornecedores"),
-        queryClient.invalidateQueries("fornecedores-select"),
-      ]);
+      await queryClient.invalidateQueries("fornecedores");
       notification.warning({ message: "Fornecedor excluído com sucesso" });
     },
   });

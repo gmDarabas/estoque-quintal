@@ -168,7 +168,7 @@ export default function FormProduto() {
             </Col>
             <Col xs={24} md={8}>
               <Form.Item label="Categoria" name="categoria_id">
-                <SelectCategoria />
+                <SelectCategoria initialOption={produto?.categoria} />
               </Form.Item>
             </Col>
           </Row>
@@ -176,7 +176,7 @@ export default function FormProduto() {
           <Row gutter={[16, 0]}>
             <Col xs={24} md={12}>
               <Form.Item label="Fornecedor" name="fornecedor_id">
-                <SelectFornecedor />
+                <SelectFornecedor initialOption={produto?.fornecedor} />
               </Form.Item>
             </Col>
           </Row>
