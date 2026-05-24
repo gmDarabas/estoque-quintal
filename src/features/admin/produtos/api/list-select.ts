@@ -7,6 +7,7 @@ export type ProdutoSelectOption = {
   unidade: string;
   preco_custo_atual?: number | null;
   codigo?: string;
+  foto_url?: string | null;
 };
 
 const listProdutosSelect = async (
@@ -14,7 +15,7 @@ const listProdutosSelect = async (
 ): Promise<ProdutoSelectOption[]> => {
   let query = supabase
     .from("produtos")
-    .select("id, nome, unidade, preco_custo_atual, codigo")
+    .select("id, nome, unidade, preco_custo_atual, codigo, foto_url")
     .is("deleted_at", null)
     .order("nome", { ascending: true });
 
@@ -24,7 +25,7 @@ const listProdutosSelect = async (
     );
   }
 
-  const { data, error } = await query;
+  const { data, error } = await query.limit(10);
   if (error) throw error;
   return data ?? [];
 };

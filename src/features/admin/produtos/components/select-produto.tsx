@@ -1,7 +1,8 @@
-import { Select } from "antd";
+import { Avatar, Flex, Select, Typography } from "antd";
 import { ProdutoSelectOption, useListProdutosSelect } from "../api/list-select";
 import { useMemo, useState } from "react";
 import { useDebounce } from "@/lib/use-debounce";
+import { ShoppingOutlined } from "@ant-design/icons";
 
 type Props = {
   value?: string | null;
@@ -9,6 +10,26 @@ type Props = {
   onSelect?: (product: ProdutoSelectOption | null) => void;
   placeholder?: string;
 };
+
+type ProdutoOption = {
+  value: string;
+  label: string;
+  foto_url?: string | null;
+};
+
+function ProdutoImage({ option }: { option: ProdutoOption }) {
+  return (
+    <Flex align="center" gap={8}>
+      <Avatar
+        size={32}
+        src={option.foto_url ?? undefined}
+        icon={!option.foto_url && <ShoppingOutlined />}
+        shape="square"
+      />
+      <Typography.Text>{option.label}</Typography.Text>
+    </Flex>
+  );
+}
 
 export default function SelectProduto({
   value,
@@ -29,10 +50,11 @@ export default function SelectProduto({
     }
   };
 
-  const options = useMemo(() => {
+  const options = useMemo<ProdutoOption[]>(() => {
     return produtos.map((p) => ({
       value: p.id,
-      label: `${p.nome} ${p.codigo ? " - " + p.codigo : ""}`,
+      label: `${p.nome}${p.codigo ? " - " + p.codigo : ""}`,
+      foto_url: p.foto_url,
     }));
   }, [produtos]);
 
@@ -49,6 +71,7 @@ export default function SelectProduto({
       options={options}
       onChange={handleChange}
       style={{ width: "100%" }}
+      optionRender={(option) => <ProdutoImage option={option.data} />}
     />
   );
 }
