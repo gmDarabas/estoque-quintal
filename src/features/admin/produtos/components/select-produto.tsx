@@ -1,5 +1,7 @@
 import { Select } from "antd";
 import { ProdutoSelectOption, useListProdutosSelect } from "../api/list-select";
+import { useMemo, useState } from "react";
+import { useDebounce } from "@/lib/use-debounce";
 
 type Props = {
   value?: string | null;
@@ -14,12 +16,10 @@ export default function SelectProduto({
   onSelect,
   placeholder = "Selecione um produto",
 }: Props) {
-  const { data: produtos = [], isLoading } = useListProdutosSelect();
+  const [query, setQuery] = useState<string>();
+  const { data: produtos = [], isLoading } = useListProdutosSelect(query);
 
-  const options = produtos.map((p) => ({
-    value: p.id,
-    label: `${p.nome} (${p.unidade})`,
-  }));
+  const handleSearch = useDebounce(setQuery, 400);
 
   const handleChange = (val: string | null) => {
     onChange?.(val ?? null);
@@ -29,17 +29,24 @@ export default function SelectProduto({
     }
   };
 
+  const options = useMemo(() => {
+    return produtos.map((p) => ({
+      value: p.id,
+      label: `${p.nome} ${p.codigo ? " - " + p.codigo : ""}`,
+    }));
+  }, [produtos]);
+
   return (
     <Select
-      showSearch
+      showSearch={{
+        onSearch: handleSearch,
+        filterOption: false,
+      }}
       allowClear
       loading={isLoading}
       value={value}
       placeholder={placeholder}
       options={options}
-      filterOption={(input, option) =>
-        (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-      }
       onChange={handleChange}
       style={{ width: "100%" }}
     />

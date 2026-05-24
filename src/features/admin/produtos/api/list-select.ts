@@ -6,23 +6,33 @@ export type ProdutoSelectOption = {
   nome: string;
   unidade: string;
   preco_custo_atual?: number | null;
+  codigo?: string;
 };
 
-const listProdutosSelect = async (): Promise<ProdutoSelectOption[]> => {
-  const { data, error } = await supabase
+const listProdutosSelect = async (
+  q?: string,
+): Promise<ProdutoSelectOption[]> => {
+  let query = supabase
     .from("produtos")
-    .select("id, nome, unidade, preco_custo_atual")
+    .select("id, nome, unidade, preco_custo_atual, codigo")
     .is("deleted_at", null)
     .order("nome", { ascending: true });
 
+  if (q) {
+    query = query.or(
+      `codigo.ilike.%${q}%,nome.ilike.%${q}%,descricao.ilike.%${q}%`,
+    );
+  }
+
+  const { data, error } = await query;
   if (error) throw error;
   return data ?? [];
 };
 
-const useListProdutosSelect = () => {
+const useListProdutosSelect = (q?: string) => {
   return useQuery({
-    queryKey: ["produtos-select"],
-    queryFn: listProdutosSelect,
+    queryKey: ["produtos-select", q],
+    queryFn: () => listProdutosSelect(q),
   });
 };
 
