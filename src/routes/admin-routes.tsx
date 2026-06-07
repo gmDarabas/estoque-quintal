@@ -7,6 +7,7 @@ import {
   HomeOutlined,
   LogoutOutlined,
   ShopOutlined,
+  ShoppingCartOutlined,
   SwapOutlined,
   TableOutlined,
   TagsOutlined,
@@ -20,6 +21,8 @@ import PageProdutos from "@/features/admin/produtos/page-produtos";
 import PageCadastroProduto from "@/features/admin/produtos/page-cadastro-produto";
 import PageMovimentacoes from "@/features/admin/movimentacoes/page-movimentacoes";
 import PageCadastroMovimentacao from "@/features/admin/movimentacoes/page-cadastro-movimentacao";
+import PageVendas from "@/features/admin/vendas/page-vendas";
+import PageCadastroVenda from "@/features/admin/vendas/page-cadastro-venda";
 import PagePosicaoEstoque from "@/features/admin/relatorios/page-posicao-estoque";
 import PageEstoqueMinimo from "@/features/admin/relatorios/page-estoque-minimo";
 import PagePerdas from "@/features/admin/relatorios/page-perdas";
@@ -33,6 +36,7 @@ const menuItens: ItemType[] = [
   { key: "/produtos", label: "Produtos", icon: <AppstoreOutlined /> },
   { key: "/fornecedores", label: "Fornecedores", icon: <ShopOutlined /> },
   { key: "/categorias", label: "Categorias", icon: <TagsOutlined /> },
+  { key: "/vendas", label: "Vendas", icon: <ShoppingCartOutlined /> },
   { key: "/movimentacoes", label: "Movimentações", icon: <SwapOutlined /> },
   {
     key: "relatorios",
@@ -73,6 +77,8 @@ export default function AdminRoutes() {
         path="movimentacao/cadastrar"
         element={<PageCadastroMovimentacao />}
       />
+      <Route path="vendas" element={<PageVendas />} />
+      <Route path="venda/cadastrar" element={<PageCadastroVenda />} />
       <Route path="posicao-estoque" element={<PagePosicaoEstoque />} />
       <Route path="estoque-minimo" element={<PageEstoqueMinimo />} />
       <Route path="perdas" element={<PagePerdas />} />

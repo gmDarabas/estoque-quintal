@@ -5,7 +5,9 @@ export type ProdutoSelectOption = {
   id: string;
   nome: string;
   unidade: string;
+  quantidade_atual: number;
   preco_custo_atual?: number | null;
+  margem?: number | null;
   codigo?: string;
   foto_url?: string | null;
 };
@@ -14,9 +16,10 @@ const listProdutosSelect = async (
   q?: string,
 ): Promise<ProdutoSelectOption[]> => {
   let query = supabase
-    .from("produtos")
-    .select("id, nome, unidade, preco_custo_atual, codigo, foto_url")
-    .is("deleted_at", null)
+    .from("v_estoque_atual")
+    .select(
+      "id, nome, unidade, quantidade_atual, preco_custo_atual, margem, codigo, foto_url",
+    )
     .order("nome", { ascending: true });
 
   if (q) {
