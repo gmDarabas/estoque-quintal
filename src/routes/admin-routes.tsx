@@ -4,6 +4,7 @@ import {
   AppstoreOutlined,
   BarChartOutlined,
   FallOutlined,
+  FilePdfOutlined,
   HomeOutlined,
   LogoutOutlined,
   ShopOutlined,
@@ -23,6 +24,7 @@ import PageMovimentacoes from "@/features/admin/movimentacoes/page-movimentacoes
 import PageCadastroMovimentacao from "@/features/admin/movimentacoes/page-cadastro-movimentacao";
 import PageVendas from "@/features/admin/vendas/page-vendas";
 import PageCadastroVenda from "@/features/admin/vendas/page-cadastro-venda";
+import PageOrcamento from "@/features/admin/orcamentos/page-orcamento";
 import PagePosicaoEstoque from "@/features/admin/relatorios/page-posicao-estoque";
 import PageEstoqueMinimo from "@/features/admin/relatorios/page-estoque-minimo";
 import PagePerdas from "@/features/admin/relatorios/page-perdas";
@@ -36,8 +38,20 @@ const menuItens: ItemType[] = [
   { key: "/produtos", label: "Produtos", icon: <AppstoreOutlined /> },
   { key: "/fornecedores", label: "Fornecedores", icon: <ShopOutlined /> },
   { key: "/categorias", label: "Categorias", icon: <TagsOutlined /> },
-  { key: "/vendas", label: "Vendas", icon: <ShoppingCartOutlined /> },
-  { key: "/movimentacoes", label: "Movimentações", icon: <SwapOutlined /> },
+  {
+    key: "movimentacoes",
+    label: "Movimentações",
+    icon: <SwapOutlined />,
+    children: [
+      {
+        key: "/movimentacoes",
+        label: "Todas movimentações",
+        icon: <SwapOutlined />,
+      },
+      { key: "/vendas", label: "Vendas", icon: <ShoppingCartOutlined /> },
+    ],
+  },
+  { key: "/orcamentos", label: "Orçamentos", icon: <FilePdfOutlined /> },
   {
     key: "relatorios",
     label: "Relatórios",
@@ -79,6 +93,7 @@ export default function AdminRoutes() {
       />
       <Route path="vendas" element={<PageVendas />} />
       <Route path="venda/cadastrar" element={<PageCadastroVenda />} />
+      <Route path="orcamentos" element={<PageOrcamento />} />
       <Route path="posicao-estoque" element={<PagePosicaoEstoque />} />
       <Route path="estoque-minimo" element={<PageEstoqueMinimo />} />
       <Route path="perdas" element={<PagePerdas />} />

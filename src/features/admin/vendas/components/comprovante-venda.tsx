@@ -1,12 +1,9 @@
-import { PrinterOutlined } from "@ant-design/icons";
-import { Button, Divider, Modal, Spin, Table, Typography } from "antd";
-import type { ColumnsType } from "antd/es/table";
+import { DownloadOutlined } from "@ant-design/icons";
+import { Button, Modal, Spin } from "antd";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import dayjs from "dayjs";
 import { useGetVenda } from "../api/get-one";
-import { VendaItem } from "../api/types";
-import { displayMoney } from "@/lib/utils";
-import "./comprovante-venda.css";
-
-const { Title, Text } = Typography;
+import ComprovanteDocument from "../pdf/comprovante-document";
 
 type Props = {
   vendaId: string | null;
@@ -14,38 +11,13 @@ type Props = {
   onClose: () => void;
 };
 
-const subtotal = (item: VendaItem) =>
-  (item.quantidade || 0) * (item.preco_venda_unitario || 0);
-
-const columns: ColumnsType<VendaItem> = [
-  {
-    title: "Produto",
-    dataIndex: ["produtos", "nome"],
-    render: (_: unknown, item) => item.produtos?.nome ?? "—",
-  },
-  {
-    title: "Qtd.",
-    dataIndex: "quantidade",
-    width: 90,
-    render: (qtd: number, item) => `${qtd} ${item.produtos?.unidade ?? ""}`,
-  },
-  {
-    title: "Preço un.",
-    dataIndex: "preco_venda_unitario",
-    width: 110,
-    align: "right",
-    render: (preco: number | null) => displayMoney(preco) || "—",
-  },
-  {
-    title: "Subtotal",
-    width: 110,
-    align: "right",
-    render: (_: unknown, item) => displayMoney(subtotal(item)) || "—",
-  },
-];
-
 export default function ComprovanteVenda({ vendaId, open, onClose }: Props) {
   const { data: venda, isLoading } = useGetVenda(vendaId ?? undefined);
+
+  const doc = venda ? <ComprovanteDocument venda={venda} /> : null;
+  const fileName = venda
+    ? `comprovante-venda-${dayjs(venda.data_operacao).format("YYYY-MM-DD")}.pdf`
+    : "comprovante.pdf";
 
   return (
     <Modal
@@ -56,58 +28,40 @@ export default function ComprovanteVenda({ vendaId, open, onClose }: Props) {
         <Button key="fechar" onClick={onClose}>
           Fechar
         </Button>,
-        <Button
-          key="imprimir"
-          type="primary"
-          icon={<PrinterOutlined />}
-          onClick={() => window.print()}
-        >
-          Imprimir
-        </Button>,
+        doc ? (
+          <PDFDownloadLink
+            key="baixar"
+            document={doc}
+            fileName={fileName}
+            style={{ textDecoration: "none" }}
+          >
+            {({ loading }) => (
+              <Button
+                type="primary"
+                icon={<DownloadOutlined />}
+                loading={loading}
+              >
+                Baixar PDF
+              </Button>
+            )}
+          </PDFDownloadLink>
+        ) : null,
       ]}
-      width={620}
+      width={680}
     >
       <Spin spinning={isLoading}>
-        {venda && (
-          <div className="comprovante-print">
-            <Title level={4} style={{ marginBottom: 4 }}>
-              Comprovante de venda
-            </Title>
-            <Text type="secondary">
-              {new Date(venda.data_operacao).toLocaleString("pt-BR")}
-            </Text>
-
-            <Divider style={{ margin: "12px 0" }} />
-
-            <Table
-              columns={columns}
-              dataSource={venda.itens}
-              rowKey="id"
-              pagination={false}
-              size="small"
-            />
-
-            <Divider style={{ margin: "12px 0" }} />
-
-            <div style={{ textAlign: "right" }}>
-              <Text style={{ fontSize: 16 }}>
-                Total:{" "}
-                <Text strong style={{ fontSize: 18 }}>
-                  {displayMoney(venda.total) || "R$ 0,00"}
-                </Text>
-              </Text>
-            </div>
-
-            {venda.observacao && (
-              <Text
-                type="secondary"
-                style={{ display: "block", marginTop: 12 }}
-              >
-                Observação: {venda.observacao}
-              </Text>
-            )}
-          </div>
-        )}
+        <div style={{ height: 600 }}>
+          {doc && (
+            <PDFViewer
+              width="100%"
+              height="100%"
+              showToolbar={false}
+              style={{ border: "none" }}
+            >
+              {doc}
+            </PDFViewer>
+          )}
+        </div>
       </Spin>
     </Modal>
   );
