@@ -2,7 +2,7 @@ import { Document, Image, Page, Text, View } from "@react-pdf/renderer";
 import dayjs from "dayjs";
 import { styles } from "@/components/pdf/timbrado-styles";
 import timbradoBg from "@/components/pdf/assets/timbrado-bg.png";
-import { displayMoney } from "@/lib/utils";
+import { displayCpfCnpj, displayMoney } from "@/lib/utils";
 import { VendaComItens, VendaItem } from "../api/types";
 
 const money = (v: number | null | undefined) => displayMoney(v) || "R$ 0,00";
@@ -10,11 +10,22 @@ const money = (v: number | null | undefined) => displayMoney(v) || "R$ 0,00";
 const subtotal = (it: VendaItem) =>
   (it.quantidade || 0) * (it.preco_venda_unitario || 0);
 
-type Props = {
-  venda: VendaComItens;
+export type ComprovanteCliente = {
+  nome?: string;
+  cpfCnpj?: string;
+  endereco?: string;
 };
 
-export default function ComprovanteDocument({ venda }: Props) {
+type Props = {
+  venda: VendaComItens;
+  cliente?: ComprovanteCliente;
+};
+
+export default function ComprovanteDocument({ venda, cliente }: Props) {
+  const nome = cliente?.nome?.trim();
+  const cpfCnpj = cliente?.cpfCnpj ? displayCpfCnpj(cliente.cpfCnpj) : "";
+  const endereco = cliente?.endereco?.trim();
+
   return (
     <Document title="Comprovante de Venda - Quintal da Olívia">
       <Page size="A4" style={styles.page}>
@@ -27,6 +38,26 @@ export default function ComprovanteDocument({ venda }: Props) {
           <Text style={styles.infoLabel}>Data: </Text>
           {dayjs(venda.data_operacao).format("DD/MM/YYYY HH:mm")}
         </Text>
+
+        {nome ? (
+          <Text style={styles.infoLinha}>
+            <Text style={styles.infoLabel}>Comprador: </Text>
+            {nome}
+            {cpfCnpj ? ` - ${cpfCnpj}` : ""}
+          </Text>
+        ) : cpfCnpj ? (
+          <Text style={styles.infoLinha}>
+            <Text style={styles.infoLabel}>CPF / CNPJ: </Text>
+            {cpfCnpj}
+          </Text>
+        ) : null}
+
+        {endereco ? (
+          <Text style={styles.infoLinha}>
+            <Text style={styles.infoLabel}>Endereço: </Text>
+            {endereco}
+          </Text>
+        ) : null}
 
         <View style={styles.table}>
           {/* Cabeçalho — fixed para repetir ao quebrar página */}

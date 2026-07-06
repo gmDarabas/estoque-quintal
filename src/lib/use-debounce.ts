@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useDebounce<T extends unknown[]>(
   fn: (...args: T) => void,
@@ -13,4 +13,16 @@ export function useDebounce<T extends unknown[]>(
     },
     [fn, delay],
   );
+}
+
+/** Retorna `value` com atraso — só atualiza após `delay` ms sem mudanças. */
+export function useDebouncedValue<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debounced;
 }
