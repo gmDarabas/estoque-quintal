@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Select, notification } from "antd";
+import { useDebouncedValue } from "@/lib/use-debounce";
 import { useListCategorias } from "../api/list";
 import { useCreateCategoria } from "../api/create";
 import { Categoria } from "../api/types";
@@ -22,8 +23,13 @@ export default function SelectCategoria({
   style,
 }: Props) {
   const [search, setSearch] = useState("");
+  const q = useDebouncedValue(search.trim(), 400);
 
-  const { data: pageData } = useListCategorias({ page: 1, rpp: 15 });
+  const { data: pageData, isFetching } = useListCategorias({
+    page: 1,
+    rpp: 15,
+    q: q || undefined,
+  });
   const categorias = pageData?.list ?? [];
   const createCategoria = useCreateCategoria();
 
@@ -42,7 +48,7 @@ export default function SelectCategoria({
     }
 
     return existing;
-  }, [categorias, search, initialOption]);
+  }, [categorias, search, initialOption, allowCreate]);
 
   const handleChange = async (selected: string | null) => {
     if (!selected) {
@@ -72,6 +78,7 @@ export default function SelectCategoria({
       value={value}
       placeholder={placeholder}
       options={options}
+      loading={isFetching}
       filterOption={false}
       onSearch={setSearch}
       onChange={handleChange}

@@ -32,12 +32,17 @@ const listCategorias = async ({
   return { list: data ?? [], totalCount: count ?? 0, page, rpp };
 };
 
-const useListCategorias = ({ page = 1, rpp = 15 }: GetPageOptions = {}) => {
+const useListCategorias = ({
+  page = 1,
+  rpp = 15,
+  q,
+}: GetPageOptions & { q?: string } = {}) => {
   return usePaginator<Categoria>({
     queryKey: ["categorias"],
     fetch: listCategorias,
     page,
     rpp,
+    defaultParams: { q },
   });
 };
 
