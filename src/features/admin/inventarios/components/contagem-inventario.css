@@ -1,0 +1,11 @@
+/* Stepper de contagem no mobile: input alinhado à altura dos botões +/- */
+.contagem-stepper-input.ant-input-number {
+  display: flex;
+  align-items: center;
+}
+
+.contagem-stepper-input .ant-input-number-input {
+  height: 46px;
+  text-align: center;
+  font-size: 18px;
+}

@@ -7,6 +7,7 @@ import {
   FilePdfOutlined,
   HomeOutlined,
   LogoutOutlined,
+  ReconciliationOutlined,
   ShopOutlined,
   ShoppingCartOutlined,
   SwapOutlined,
@@ -22,6 +23,9 @@ import PageProdutos from "@/features/admin/produtos/page-produtos";
 import PageCadastroProduto from "@/features/admin/produtos/page-cadastro-produto";
 import PageMovimentacoes from "@/features/admin/movimentacoes/page-movimentacoes";
 import PageCadastroMovimentacao from "@/features/admin/movimentacoes/page-cadastro-movimentacao";
+import PageInventarios from "@/features/admin/inventarios/page-inventarios";
+import PageCadastroInventario from "@/features/admin/inventarios/page-cadastro-inventario";
+import PageInventario from "@/features/admin/inventarios/page-inventario";
 import PageVendas from "@/features/admin/vendas/page-vendas";
 import PageCadastroVenda from "@/features/admin/vendas/page-cadastro-venda";
 import PageOrcamento from "@/features/admin/orcamentos/page-orcamento";
@@ -49,6 +53,11 @@ const menuItens: ItemType[] = [
         icon: <SwapOutlined />,
       },
       { key: "/vendas", label: "Vendas", icon: <ShoppingCartOutlined /> },
+      {
+        key: "/inventarios",
+        label: "Inventário",
+        icon: <ReconciliationOutlined />,
+      },
     ],
   },
   { key: "/orcamentos", label: "Orçamentos", icon: <FilePdfOutlined /> },
@@ -93,6 +102,9 @@ export default function AdminRoutes() {
       />
       <Route path="vendas" element={<PageVendas />} />
       <Route path="venda/cadastrar" element={<PageCadastroVenda />} />
+      <Route path="inventarios" element={<PageInventarios />} />
+      <Route path="inventario/cadastrar" element={<PageCadastroInventario />} />
+      <Route path="inventario/:id" element={<PageInventario />} />
       <Route path="orcamentos" element={<PageOrcamento />} />
       <Route path="posicao-estoque" element={<PagePosicaoEstoque />} />
       <Route path="estoque-minimo" element={<PageEstoqueMinimo />} />
