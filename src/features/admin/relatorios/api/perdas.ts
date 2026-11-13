@@ -3,6 +3,7 @@ import { GetPageOptions, Page } from "@/types/interfaces";
 import { supabase } from "@/supabaseClient";
 import { MovimentacaoComProduto } from "../../movimentacoes/api/types";
 import { useQuery } from "react-query";
+import { custoUnitario, resolveCustosPorProduto } from "./custos";
 
 export type ListPerdasParams = GetPageOptions & {
   produto_id?: string;
@@ -10,12 +11,17 @@ export type ListPerdasParams = GetPageOptions & {
   data_ate?: string;
 };
 
+/** A perda não guarda o próprio custo; ele vem resolvido de `./custos`. */
+export type PerdaComCusto = MovimentacaoComProduto & {
+  custo_unitario: number | null;
+};
+
 export type PerdasTotais = {
   totalQuantidade: number;
   totalValor: number;
 };
 
-const listPerdas = async (params: ListPerdasParams): Promise<Page<MovimentacaoComProduto>> => {
+const listPerdas = async (params: ListPerdasParams): Promise<Page<PerdaComCusto>> => {
   const page = params.page || 1;
   const rpp = params.rpp || 15;
   const from = (page - 1) * rpp;
@@ -35,7 +41,16 @@ const listPerdas = async (params: ListPerdasParams): Promise<Page<MovimentacaoCo
 
   const { data, count, error } = await query;
   if (error) throw error;
-  return { list: data ?? [], totalCount: count ?? 0, page, rpp };
+
+  const perdas = data ?? [];
+  const custos = await resolveCustosPorProduto(perdas.map((p) => p.produto_id));
+
+  return {
+    list: perdas.map((p) => ({ ...p, custo_unitario: custoUnitario(p, custos) })),
+    totalCount: count ?? 0,
+    page,
+    rpp,
+  };
 };
 
 const fetchPerdasTotais = async (
@@ -43,7 +58,7 @@ const fetchPerdasTotais = async (
 ): Promise<PerdasTotais> => {
   let query = supabase
     .from("movimentacoes")
-    .select("quantidade,preco_custo_unitario")
+    .select("produto_id,quantidade,preco_custo_unitario")
     .eq("tipo", "perda")
     .is("deleted_at", null);
 
@@ -54,10 +69,15 @@ const fetchPerdasTotais = async (
   const { data, error } = await query;
   if (error) throw error;
 
+  const perdas = data ?? [];
+  const custos = await resolveCustosPorProduto(perdas.map((p) => p.produto_id));
+
   return {
-    totalQuantidade: data?.reduce((s, p) => s + p.quantidade, 0) ?? 0,
-    totalValor:
-      data?.reduce((s, p) => s + p.quantidade * (p.preco_custo_unitario ?? 0), 0) ?? 0,
+    totalQuantidade: perdas.reduce((s, p) => s + p.quantidade, 0),
+    totalValor: perdas.reduce(
+      (s, p) => s + p.quantidade * (custoUnitario(p, custos) ?? 0),
+      0,
+    ),
   };
 };
 
@@ -66,7 +86,7 @@ export const useListPerdas = ({
   rpp = 15,
   queryKeys = [],
 }: GetPageOptions & { queryKeys?: string[] }) =>
-  usePaginator<MovimentacaoComProduto>({
+  usePaginator<PerdaComCusto>({
     queryKey: ["perdas", ...queryKeys],
     fetch: listPerdas,
     page,

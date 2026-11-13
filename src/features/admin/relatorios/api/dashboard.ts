@@ -1,5 +1,6 @@
 import { supabase } from "@/supabaseClient";
 import { useQuery } from "react-query";
+import { custoUnitario, resolveCustosPorProduto } from "./custos";
 
 export type DashboardKpis = {
   valorTotalEstoque: number;
@@ -61,7 +62,7 @@ const fetchPeriodKpis = async (
       .lte("data_movimentacao", dataAte),
     supabase
       .from("movimentacoes")
-      .select("quantidade,produtos(preco_custo_atual)")
+      .select("produto_id,quantidade,preco_custo_unitario")
       .eq("tipo", "perda")
       .is("deleted_at", null)
       .gte("data_movimentacao", dataDe)
@@ -71,6 +72,11 @@ const fetchPeriodKpis = async (
   if (e1) throw e1;
   if (e2) throw e2;
   if (e3) throw e3;
+
+  // Mesma base de custo do Registro de Perdas, para os dois números baterem.
+  const custos = await resolveCustosPorProduto(
+    (perdas ?? []).map((p) => p.produto_id),
+  );
 
   return {
     valorEntradas:
@@ -84,15 +90,10 @@ const fetchPeriodKpis = async (
         0,
       ) ?? 0,
     valorPerdas:
-      perdas?.reduce((s, p) => {
-        const custo =
-          (
-            p.produtos as unknown as {
-              preco_custo_atual?: number | null;
-            } | null
-          )?.preco_custo_atual ?? 0;
-        return s + p.quantidade * custo;
-      }, 0) ?? 0,
+      perdas?.reduce(
+        (s, p) => s + p.quantidade * (custoUnitario(p, custos) ?? 0),
+        0,
+      ) ?? 0,
   };
 };
 

@@ -1,36 +1,37 @@
 import { Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
-import { MovimentacaoComProduto } from "../../movimentacoes/api/types";
+import { PerdaComCusto } from "../api/perdas";
 import { displayMoney } from "@/lib/utils";
 
 interface Props {
-  data: MovimentacaoComProduto[] | undefined;
+  data: PerdaComCusto[] | undefined;
   loading: boolean;
   pagination: TablePaginationConfig;
 }
 
-const columns: ColumnsType<MovimentacaoComProduto> = [
+const columns: ColumnsType<PerdaComCusto> = [
   {
+    // Data do evento, não do lançamento: as perdas são registradas depois.
     title: "Data",
-    dataIndex: "created_at",
+    dataIndex: "data_movimentacao",
     width: 160,
     render: (d: string) => new Date(d).toLocaleString("pt-BR"),
   },
   {
     title: "Produto",
     dataIndex: "produtos",
-    render: (p: MovimentacaoComProduto["produtos"]) => p?.nome ?? "—",
+    render: (p: PerdaComCusto["produtos"]) => p?.nome ?? "—",
   },
   {
     title: "Quantidade",
     dataIndex: "quantidade",
     width: 120,
-    render: (qtd: number, row: MovimentacaoComProduto) =>
+    render: (qtd: number, row: PerdaComCusto) =>
       `${qtd} ${row.produtos?.unidade ?? ""}`,
   },
   {
     title: "Custo Unit.",
-    dataIndex: "preco_custo_unitario",
+    dataIndex: "custo_unitario",
     width: 130,
     responsive: ["md"],
     render: (v: number | null) => displayMoney(v) || "—",
@@ -38,9 +39,9 @@ const columns: ColumnsType<MovimentacaoComProduto> = [
   {
     title: "Valor Perdido",
     width: 140,
-    render: (_: unknown, row: MovimentacaoComProduto) => {
-      if (row.preco_custo_unitario == null) return "—";
-      return displayMoney(row.quantidade * row.preco_custo_unitario);
+    render: (_: unknown, row: PerdaComCusto) => {
+      if (row.custo_unitario == null) return "—";
+      return displayMoney(row.quantidade * row.custo_unitario);
     },
   },
   {

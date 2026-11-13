@@ -55,7 +55,9 @@ export default function PagePerdas() {
               <Card size="small">
                 <Statistic
                   title="Valor total perdido (custo)"
-                  value={displayMoney(totais.totalValor)}
+                  // displayMoney devolve "" para zero; aqui zero é resultado
+                  // legítimo ("nenhuma perda no período"), não ausência de dado.
+                  value={displayMoney(totais.totalValor) || "R$ 0,00"}
                   valueStyle={{ color: "#cf1322" }}
                 />
               </Card>
